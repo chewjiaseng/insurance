@@ -29,21 +29,21 @@ class _RegisterState extends State<Register> {
   bool _isObscure2 = true;
   File? file;
   var options = [
-    'Student',
-    'Teacher',
+    'customer',
+    'agent',
   ];
-  var _currentItemSelected = "Student";
-  var rool = "Student";
+  var _currentItemSelected = "customer";
+  var rool = "customer";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.orange[900],
+      backgroundColor: Color.fromARGB(255, 30, 131, 36),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
             Container(
-              color: Colors.orangeAccent[700],
+              color: Colors.blue[700],
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: SingleChildScrollView(
@@ -59,18 +59,91 @@ class _RegisterState extends State<Register> {
                           height: 80,
                         ),
                         Text(
-                          "Register Now",
+                          "Register New Account",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
-                            fontSize: 40,
+                            fontSize: 30,
                           ),
                         ),
                         SizedBox(
                           height: 10,
                         ),
+                        
+                      //Name Text Filled
+                      SizedBox(
+                        height: 20,
+                      ),
+
+                      TextFormField(
+                          controller: name,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            hintText: 'Name',
+                            enabled: true,
+                            contentPadding: const EdgeInsets.only(
+                              left: 14.0,
+                              bottom: 8.0,
+                              top: 8.0,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return "Name cannot be empty";
+                            } else {
+                              return null;
+                            }
+                          },
+                          onChanged: (value) {},
+                        ),
+
+                        //Hp Text Filled
                         SizedBox(
-                          height: 50,
+                          height: 20,
+                        ),
+                        TextFormField(
+                          controller: mobile,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            hintText: 'Hp',
+                            enabled: true,
+                            contentPadding: const EdgeInsets.only(
+                              left: 14.0,
+                              bottom: 8.0,
+                              top: 8.0,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: new BorderSide(color: Colors.white),
+                              borderRadius: new BorderRadius.circular(20),
+                            ),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: new BorderSide(color: Colors.white),
+                              borderRadius: new BorderRadius.circular(20),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return "Hp cannot be empty";
+                            } else {
+                              return null;
+                            }
+                          },
+                          onChanged: (value) {},
+                        ),
+
+                        //Email text fill
+                        SizedBox(
+                          height: 20,
                         ),
                         TextFormField(
                           controller: emailController,
@@ -105,6 +178,8 @@ class _RegisterState extends State<Register> {
                           onChanged: (value) {},
                           keyboardType: TextInputType.emailAddress,
                         ),
+                        
+                        //Password Text fill
                         SizedBox(
                           height: 20,
                         ),
@@ -149,40 +224,40 @@ class _RegisterState extends State<Register> {
                           },
                           onChanged: (value) {},
                         ),
+
+                        //Confirm password text fill
                         SizedBox(
                           height: 20,
                         ),
+
                         TextFormField(
                           obscureText: _isObscure2,
                           controller: confirmpassController,
                           decoration: InputDecoration(
                             suffixIcon: IconButton(
-                                icon: Icon(_isObscure2
-                                    ? Icons.visibility_off
-                                    : Icons.visibility),
-                                onPressed: () {
-                                  setState(() {
-                                    _isObscure2 = !_isObscure2;
-                                  });
-                                }),
+                              icon: Icon(_isObscure2 ? Icons.visibility_off : Icons.visibility),
+                              onPressed: () {
+                                setState(() {
+                                  _isObscure2 = !_isObscure2;
+                                });
+                              },
+                            ),
                             filled: true,
                             fillColor: Colors.white,
                             hintText: 'Confirm Password',
                             enabled: true,
-                            contentPadding: const EdgeInsets.only(
-                                left: 14.0, bottom: 8.0, top: 15.0),
+                            contentPadding: const EdgeInsets.only(left: 14.0, bottom: 8.0, top: 15.0),
                             focusedBorder: OutlineInputBorder(
-                              borderSide: new BorderSide(color: Colors.white),
-                              borderRadius: new BorderRadius.circular(20),
+                              borderSide: BorderSide(color: Colors.white),
+                              borderRadius: BorderRadius.circular(20),
                             ),
                             enabledBorder: UnderlineInputBorder(
-                              borderSide: new BorderSide(color: Colors.white),
-                              borderRadius: new BorderRadius.circular(20),
+                              borderSide: BorderSide(color: Colors.white),
+                              borderRadius: BorderRadius.circular(20),
                             ),
                           ),
                           validator: (value) {
-                            if (confirmpassController.text !=
-                                passwordController.text) {
+                            if (confirmpassController.text != passwordController.text) {
                               return "Password did not match";
                             } else {
                               return null;
@@ -190,6 +265,7 @@ class _RegisterState extends State<Register> {
                           },
                           onChanged: (value) {},
                         ),
+                        
                         SizedBox(
                           height: 20,
                         ),
@@ -286,17 +362,7 @@ class _RegisterState extends State<Register> {
                             ),
                           ],
                         ),
-                        // SizedBox(
-                        //   height: 20,
-                        // ),
-                        // Text(
-                        //   "WEBFUN",
-                        //   style: TextStyle(
-                        //     fontWeight: FontWeight.bold,
-                        //     fontSize: 30,
-                        //     color: Colors.yellowAccent[400],
-                        //   ),
-                        // ),
+                        
                       ],
                     ),
                   ),
@@ -310,21 +376,36 @@ class _RegisterState extends State<Register> {
   }
 
   void signUp(String email, String password, String rool) async {
-    CircularProgressIndicator();
-    if (_formkey.currentState!.validate()) {
-      await _auth
-          .createUserWithEmailAndPassword(email: email, password: password)
-          .then((value) => {postDetailsToFirestore(email, rool)})
-          .catchError((e) {});
-    }
+  CircularProgressIndicator();
+  if (_formkey.currentState!.validate()) {
+    await _auth
+        .createUserWithEmailAndPassword(email: email, password: password)
+        .then((value) => {
+              postDetailsToFirestore(
+                email,
+                name.text,
+                mobile.text,
+                rool,
+              )
+            })
+        .catchError((e) {});
   }
+}
 
-  postDetailsToFirestore(String email, String rool) async {
-    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-    var user = _auth.currentUser;
-    CollectionReference ref = FirebaseFirestore.instance.collection('users');
-    ref.doc(user!.uid).set({'email': emailController.text, 'rool': rool});
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => LoginPage()));
-  }
+postDetailsToFirestore(
+    String email, String name, String mobile, String rool) async {
+  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+  var user = _auth.currentUser;
+  CollectionReference ref = FirebaseFirestore.instance.collection('users');
+  ref.doc(user!.uid).set({
+    'email': emailController.text,
+    'name': name,
+    'mobile': mobile,
+    'rool': rool
+  });
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (context) => LoginPage()),
+  );
+}
 }

@@ -1,9 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'student.dart';
-import 'teacher.dart';
+import 'CustomerFile/customer.dart';
+import 'ConsultantFile/agent.dart';
 import 'register.dart';
+import 'adminFile/adminUI.dart';
 
 
 
@@ -27,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           children: <Widget>[
             Container(
-              color: Colors.orangeAccent[700],
+              color: Colors.blue,
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * 0.70,
               child: Center(
@@ -217,37 +218,7 @@ class _LoginPageState extends State<LoginPage> {
                     SizedBox(
                       height: 15,
                     ),
-                    // Text(
-                    //   "Made by",
-                    //   style: TextStyle(
-                    //     fontWeight: FontWeight.bold,
-                    //     fontSize: 40,
-                    //   ),
-                    // ),
-                    // SizedBox(
-                    //   height: 5,
-                    // ),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.center,
-                    //   children: [
-                    //     Text(
-                    //       "WEB",
-                    //       style: TextStyle(
-                    //         fontWeight: FontWeight.bold,
-                    //         fontSize: 30,
-                    //         color: Colors.blue[900],
-                    //       ),
-                    //     ),
-                    //     Text(
-                    //       "FUN",
-                    //       style: TextStyle(
-                    //         fontWeight: FontWeight.bold,
-                    //         fontSize: 30,
-                    //         color: Colors.yellowAccent[400],
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
+                    
                   ],
                 ),
               ),
@@ -258,6 +229,34 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  void adminLogin(String email, String password) async {
+  try {
+    // Check if the provided credentials match the admin credentials
+    QuerySnapshot adminSnapshot = await FirebaseFirestore.instance
+        .collection('admins')
+        .where('adminEmail', isEqualTo: email)
+        .where('adminPassword', isEqualTo: password)
+        .get();
+
+    if (adminSnapshot.docs.isNotEmpty) {
+      // Admin login successful
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => AdminPage()),
+      );
+      return;
+    }
+
+    // Admin login failed
+    print('Invalid admin credentials.');
+  } catch (e) {
+    print('Error during admin login: $e');
+  }
+}
+
+
+
+
   void route() {
     User? user = FirebaseAuth.instance.currentUser;
     var kk = FirebaseFirestore.instance
@@ -266,18 +265,18 @@ class _LoginPageState extends State<LoginPage> {
             .get()
             .then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
-        if (documentSnapshot.get('rool') == "Teacher") {
+        if (documentSnapshot.get('rool') == "agent") {
            Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) =>  Teacher(),
+            builder: (context) =>  agent(),
           ),
         );
         }else{
           Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) =>  Student(),
+            builder: (context) =>  customer(),
           ),
         );
         }
@@ -288,23 +287,30 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void signIn(String email, String password) async {
-    if (_formkey.currentState!.validate()) {
-      try {
-        UserCredential userCredential =
-            await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
-        route();
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'user-not-found') {
-          print('No user found for that email.');
-        } else if (e.code == 'wrong-password') {
-          print('Wrong password provided for that user.');
-        }
+  if (_formkey.currentState!.validate()) {
+    // Check if the user is an admin
+    if (email == 'admin@gmail.com') {
+      adminLogin(email, password);
+      return;
+    }
+
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      route();
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
       }
     }
   }
+}
+
 }
 
 

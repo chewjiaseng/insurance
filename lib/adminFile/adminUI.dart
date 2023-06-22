@@ -1,25 +1,25 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'login.dart';
+import '../login.dart';
 
-class Student extends StatefulWidget {
-  const Student({super.key});
+class AdminPage extends StatefulWidget {
+  const AdminPage({super.key});
 
   @override
-  State<Student> createState() => _StudentState();
+  State<AdminPage> createState() => _AdminPageState();
 }
 
-class _StudentState extends State<Student> {
+class _AdminPageState extends State<AdminPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Student"),
+        title: Text("Admin"),
         actions: [
           IconButton(
             onPressed: () {
-              logout(context);
+              logout();
             },
             icon: Icon(
               Icons.logout,
@@ -30,9 +30,13 @@ class _StudentState extends State<Student> {
     );
   }
 
-  Future<void> logout(BuildContext context) async {
-    CircularProgressIndicator();
-    await FirebaseAuth.instance.signOut();
+  Future<void> logout() async {
+  await FirebaseAuth.instance.signOut();
+  navigateToLoginPage();
+}
+
+
+  void navigateToLoginPage() {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
