@@ -273,7 +273,7 @@ class _RegisterState extends State<Register> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Rool : ",
+                              "Role : ",
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
