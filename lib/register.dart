@@ -400,7 +400,7 @@ postDetailsToFirestore(String email, String name, String mobile, String role) as
     'email': emailController.text,
     'name': name,
     'mobile': mobile,
-    'role': role
+    'rool': rool,
   });
   Navigator.pushReplacement(
     context,

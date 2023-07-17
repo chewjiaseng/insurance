@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EditUserPage extends StatelessWidget {
@@ -9,8 +8,8 @@ class EditUserPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Edit User'),
       ),
-      body: FutureBuilder<DocumentSnapshot>(
-        future: getUserData(),
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: getUsers(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -20,54 +19,30 @@ class EditUserPage extends StatelessWidget {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
 
-          // Access the user data from the snapshot
-          final userData = snapshot.data?.data() as Map<String, dynamic>?;
+          final users = snapshot.data;
 
-          if (userData == null) {
-            return Center(child: Text('No user data found'));
+          if (users == null || users.isEmpty) {
+            return Center(child: Text('No users found'));
           }
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Email: ${userData['email'] ?? 'N/A'}'),
-              Text('Mobile: ${userData['mobile'] ?? 'N/A'}'),
-              Text('Name: ${userData['name'] ?? 'N/A'}'),
-              Text('Role: ${userData['role'] ?? 'N/A'}'),
-            ],
+          return ListView.builder(
+            itemCount: users.length,
+            itemBuilder: (context, index) {
+              final user = users[index];
+              return ListTile(
+                title: Text('Name: ${user['name'] ?? 'N/A'}'),
+                subtitle: Text('Email: ${user['email'] ?? 'N/A'}'),
+                trailing: Text('Role: ${user['rool'] ?? 'N/A'}'),
+              );
+            },
           );
         },
       ),
     );
   }
 
-Future<DocumentSnapshot> getUserData() async {
-  final user = FirebaseAuth.instance.currentUser;
-  if (user != null) {
-    final userId = user.uid;
-    final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
-    if (userDoc.exists) {
-      return userDoc;
-    } else {
-      throw Exception('User data not found');
-    }
-  } else {
-    // Wait for user authentication state to change
-    await FirebaseAuth.instance.authStateChanges().firstWhere((user) => user != null);
-
-    // User is now authenticated, retrieve the user's data
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      final userId = user.uid;
-      final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
-      if (userDoc.exists) {
-        return userDoc;
-      } else {
-        throw Exception('User data not found');
-      }
-    } else {
-      throw Exception('User not authenticated');
-    }
+  Future<List<Map<String, dynamic>>> getUsers() async {
+    final snapshot = await FirebaseFirestore.instance.collection('users').get();
+    return snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
   }
- }
 }
