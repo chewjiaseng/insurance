@@ -392,8 +392,7 @@ class _RegisterState extends State<Register> {
   }
 }
 
-postDetailsToFirestore(
-    String email, String name, String mobile, String rool) async {
+postDetailsToFirestore(String email, String name, String mobile, String role) async {
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   var user = _auth.currentUser;
   CollectionReference ref = FirebaseFirestore.instance.collection('users');
@@ -401,11 +400,11 @@ postDetailsToFirestore(
     'email': emailController.text,
     'name': name,
     'mobile': mobile,
-    'rool': rool
+    'role': role
   });
   Navigator.pushReplacement(
     context,
     MaterialPageRoute(builder: (context) => LoginPage()),
   );
-}
+ }
 }
