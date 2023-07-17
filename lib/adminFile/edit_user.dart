@@ -41,7 +41,21 @@ class EditUserPage extends StatelessWidget {
     );
   }
 
-  Future<DocumentSnapshot> getUserData() async {
+Future<DocumentSnapshot> getUserData() async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+    final userId = user.uid;
+    final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    if (userDoc.exists) {
+      return userDoc;
+    } else {
+      throw Exception('User data not found');
+    }
+  } else {
+    // Wait for user authentication state to change
+    await FirebaseAuth.instance.authStateChanges().firstWhere((user) => user != null);
+
+    // User is now authenticated, retrieve the user's data
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       final userId = user.uid;
@@ -52,10 +66,8 @@ class EditUserPage extends StatelessWidget {
         throw Exception('User data not found');
       }
     } else {
-      throw FirebaseAuthException(
-        code: 'user-not-authenticated',
-        message: 'User not authenticated',
-      );
+      throw Exception('User not authenticated');
     }
   }
+ }
 }
