@@ -1,7 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:insuranceapp/adminFile/edit_user.dart';
-
+import 'package:insuranceapp/adminFile/upload_policy.dart';
 import '../login.dart';
 
 class AdminPage extends StatefulWidget {
@@ -9,7 +9,7 @@ class AdminPage extends StatefulWidget {
 
   @override
   State<AdminPage> createState() => _AdminPageState();
-}
+} 
 
 class _AdminPageState extends State<AdminPage> {
   @override
@@ -99,7 +99,6 @@ class _AdminPageState extends State<AdminPage> {
                         ),
                       ),
                     ),
-
                   ),
                   SizedBox(width: 20),
                   Container(
@@ -107,7 +106,12 @@ class _AdminPageState extends State<AdminPage> {
                     height: buttonSize.height,
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        // Perform the action for "Upload Policy" here
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UploadPolicyPage(),
+                          ),
+                        );
                       },
                       icon: Icon(Icons.upload_file, color: Colors.black),
                       label: Text('Upload Policy', style: TextStyle(color: Colors.black)),
