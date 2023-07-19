@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'user_management.dart';
 
 class EditUserPage extends StatelessWidget {
   @override
@@ -31,8 +32,18 @@ class EditUserPage extends StatelessWidget {
               final user = users[index];
               return ListTile(
                 title: Text('Name: ${user['name'] ?? 'N/A'}'),
-                subtitle: Text('Email: ${user['email'] ?? 'N/A'}'),
-                trailing: Text('Role: ${user['rool'] ?? 'N/A'}'),
+                subtitle: Text('Role: ${user['rool'] ?? 'N/A'}'),
+                trailing: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UserManagementPage(user: user),
+                      ),
+                    );
+                  },
+                  child: Text('Manage'),
+                ),
               );
             },
           );

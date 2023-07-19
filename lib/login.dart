@@ -6,8 +6,6 @@ import 'ConsultantFile/agent.dart';
 import 'register.dart';
 import 'adminFile/adminUI.dart';
 
-
-
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -312,5 +310,3 @@ class _LoginPageState extends State<LoginPage> {
 }
 
 }
-
-
