@@ -1,16 +1,38 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../login.dart';
 
-class agent extends StatefulWidget {
-  const agent({super.key});
+class Agent extends StatefulWidget {
+  const Agent({Key? key});
 
   @override
-  State<agent> createState() => _agentState();
+  State<Agent> createState() => _AgentState();
 }
 
-class _agentState extends State<agent> {
+class _AgentState extends State<Agent> {
+  String _consultantName = ''; // Store the consultant's name
+
+  @override
+  void initState() {
+    super.initState();
+    _getConsultantName(); // Get the consultant's name when the widget initializes
+  }
+
+  Future<void> _getConsultantName() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // If user is logged in, retrieve the consultant's name from Firestore
+      var snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      setState(() {
+        _consultantName = snapshot.get('consultantName');
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,11 +49,124 @@ class _agentState extends State<agent> {
           )
         ],
       ),
+      body: Stack(
+        children: [
+          Image.asset(
+            'assets/images/consultantbg.png', // Background image path
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            fit: BoxFit.cover,
+          ),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  // Display profile picture here if available
+                  // Replace this with the actual profile picture
+                  radius: 50,
+                  backgroundColor: Colors.grey,
+                  child: Icon(
+                    Icons.person,
+                    size: 60,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  _consultantName, // Display the consultant's name here
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: GridView.count(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 20,
+                      crossAxisSpacing: 20,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            // TODO: Implement "View Customers" functionality
+                          },
+                          icon: Icon(Icons.person, color: Colors.black),
+                          label: Text('View Customers', style: TextStyle(color: Colors.black)),
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: Size(160, 60),
+                            primary: Color(0xF5F6F0F0),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(color: Colors.grey, width: 2),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            // TODO: Implement "View Policies" functionality
+                          },
+                          icon: Icon(Icons.policy, color: Colors.black),
+                          label: Text('View Policies', style: TextStyle(color: Colors.black)),
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: Size(160, 60),
+                            primary: Color(0xF5F6F0F0),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(color: Colors.grey, width: 2),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            // TODO: Implement "View Booster Packages" functionality
+                          },
+                          icon: Icon(Icons.shopping_bag, color: Colors.black),
+                          label: Text('View Booster Packages', style: TextStyle(color: Colors.black)),
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: Size(160, 60),
+                            primary: Color(0xF5F6F0F0),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(color: Colors.grey, width: 2),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            // TODO: Implement "Invite New Customers" functionality
+                          },
+                          icon: Icon(Icons.email, color: Colors.black),
+                          label: Text('Invite New Customers', style: TextStyle(color: Colors.black)),
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: Size(160, 60),
+                            primary: Color(0xF5F6F0F0),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(color: Colors.grey, width: 2),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Future<void> logout(BuildContext context) async {
-    CircularProgressIndicator();
     await FirebaseAuth.instance.signOut();
     Navigator.pushReplacement(
       context,

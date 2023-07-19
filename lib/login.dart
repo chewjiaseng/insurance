@@ -267,14 +267,14 @@ class _LoginPageState extends State<LoginPage> {
            Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) =>  agent(),
+            builder: (context) =>  Agent(),
           ),
         );
         }else{
           Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) =>  customer(),
+            builder: (context) =>  Customer(),
           ),
         );
         }
