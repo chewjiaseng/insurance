@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:insuranceapp/adminFile/edit_user.dart';
-import 'package:insuranceapp/adminFile/upload_policy.dart';
+import 'package:insuranceapp/adminFile/terms_and_conditions.dart';
 // Import other files for additional functionalities here
 
 import '../login.dart';
@@ -52,7 +52,7 @@ class _AdminPageState extends State<AdminPage> {
                   height: wrapperSize.height,
                   padding: wrapperPadding,
                   decoration: BoxDecoration(
-                    color: Color(0xF5F6F0F0),
+                    color: Color.fromRGBO(122, 135, 177, 0.961),
                     border: Border.all(color: Colors.brown, width: 2),
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -63,7 +63,7 @@ class _AdminPageState extends State<AdminPage> {
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                       ),
                       SizedBox(height: 8),
@@ -73,7 +73,7 @@ class _AdminPageState extends State<AdminPage> {
                           'Welcome to the admin panel',
                           style: TextStyle(
                             fontSize: 16,
-                            color: Colors.black26,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -118,12 +118,12 @@ class _AdminPageState extends State<AdminPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => UploadPolicyPage(),
+                              builder: (context) => TermsAndConditionsPage(),
                             ),
                           );
                         },
                         icon: Icon(Icons.upload_file, color: Colors.black),
-                        label: Text('Upload Policy', style: TextStyle(color: Colors.black)),
+                        label: Text('Upload term & condition', style: TextStyle(color: Colors.black)),
                         style: ElevatedButton.styleFrom(
                           minimumSize: buttonSize, // Set the minimum button size
                           primary: Color.fromRGBO(243, 241, 241, 1), // Set the button color to transparent
@@ -143,10 +143,10 @@ class _AdminPageState extends State<AdminPage> {
                   height: buttonSize.height,
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      // Perform the action for "Edit Package" here
+                      // Perform the action for "Reward Redemption Requests" here
                     },
-                    icon: Icon(Icons.edit_attributes, color: Colors.black),
-                    label: Text('Edit Package', style: TextStyle(color: Colors.black)),
+                    icon: Icon(Icons.star_rate, color: Colors.black),
+                    label: Text('Reward Requests', style: TextStyle(color: Colors.black)),
                     style: ElevatedButton.styleFrom(
                       minimumSize: buttonSize, // Set the minimum button size
                       primary: Color.fromRGBO(248, 241, 241, 1), // Set the button color to transparent

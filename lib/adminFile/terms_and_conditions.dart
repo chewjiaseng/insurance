@@ -1,15 +1,17 @@
 import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as path;
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:firebase_database/firebase_database.dart';
 
-class UploadPolicyPage extends StatefulWidget {
+class TermsAndConditionsPage extends StatefulWidget {
   @override
-  _UploadPolicyPageState createState() => _UploadPolicyPageState();
+  _TermsAndConditionsPageState createState() => _TermsAndConditionsPageState();
 }
 
-class _UploadPolicyPageState extends State<UploadPolicyPage> {
+class _TermsAndConditionsPageState extends State<TermsAndConditionsPage> {
   File? _selectedFile;
   bool _isUploading = false;
 
@@ -59,6 +61,10 @@ class _UploadPolicyPageState extends State<UploadPolicyPage> {
 
     String downloadURL = await storageRef.getDownloadURL();
 
+    // Save the terms and conditions content to the Firebase database for the specific role
+    String role = 'customer'; // You can get the role from the administrator's input
+    FirebaseDatabase.instance.reference().child('termsAndConditions').child(role).set(downloadURL);
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -80,7 +86,7 @@ class _UploadPolicyPageState extends State<UploadPolicyPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Upload Policy'),
+        title: Text('Upload Term & Condition'),
       ),
       body: Center(
         child: Column(

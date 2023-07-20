@@ -7,8 +7,8 @@ class UserManagementPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Implement the user management UI for the specific user here
-    // You can access user details using this.user
+    bool isCustomer = user['rool'] == 'customer';
+
     return Scaffold(
       appBar: AppBar(
         title: Text('User Management'),
@@ -17,7 +17,29 @@ class UserManagementPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('User Management for ${user['name']}'),
+            // User's Profile with Placeholder (Using FadeInImage)
+            CircleAvatar(
+              radius: 50,
+              backgroundImage: user['profileImageUrl'] != null
+                  ? NetworkImage(user['profileImageUrl']!) as ImageProvider<Object>?
+                  : null, // Use null to show the system default icon
+              child: user['profileImageUrl'] == null
+                  ? Icon(
+                      Icons.person,
+                      size: 50,
+                      color: Colors.white,
+                    )
+                  : null, // Hide the child widget when the profileImageUrl is not null
+            ),
+            SizedBox(height: 10),
+            // User's Name
+            Text(
+              '${user['name'] ?? 'Unknown User'}',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -90,16 +112,27 @@ class UserManagementPage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 20),
-                // Review Consultant Registration Button
+                // Review Consultant Registration / Upload Banner Button
                 Container(
                   width: 160,
                   height: 160,
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      // Perform the action for "Review Consultant Registration" here
+                      // Perform the action based on the user's role
+                      if (isCustomer) {
+                        // Perform the action for "Upload Banner" here
+                      } else {
+                        // Perform the action for "Review Consultant Registration" here
+                      }
                     },
-                    icon: Icon(Icons.rate_review, color: Colors.black),
-                    label: Text('Review Consultant Registration', style: TextStyle(color: Colors.black)),
+                    icon: Icon(
+                      isCustomer ? Icons.file_upload : Icons.rate_review,
+                      color: Colors.black,
+                    ),
+                    label: Text(
+                      isCustomer ? 'Upload Banner' : 'Review Consultant Registration',
+                      style: TextStyle(color: Colors.black),
+                    ),
                     style: ElevatedButton.styleFrom(
                       primary: Color(0xF5F6F0F0), // Set the button color to transparent
                       elevation: 0, // Disable the button elevation/shadow
