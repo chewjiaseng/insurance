@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -134,7 +135,6 @@ class _LoginPageState extends State<LoginPage> {
                           },
                           keyboardType: TextInputType.emailAddress,
                         ),
-                       
                         SizedBox(
                           height: 20,
                         ),
@@ -216,7 +216,6 @@ class _LoginPageState extends State<LoginPage> {
                     SizedBox(
                       height: 15,
                     ),
-                    
                   ],
                 ),
               ),
@@ -228,85 +227,99 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void adminLogin(String email, String password) async {
-  try {
-    // Check if the provided credentials match the admin credentials
-    QuerySnapshot adminSnapshot = await FirebaseFirestore.instance
-        .collection('admins')
-        .where('adminEmail', isEqualTo: email)
-        .where('adminPassword', isEqualTo: password)
-        .get();
+    try {
+      QuerySnapshot adminSnapshot = await FirebaseFirestore.instance
+          .collection('admins')
+          .where('adminEmail', isEqualTo: email)
+          .where('adminPassword', isEqualTo: password)
+          .get();
 
-    if (adminSnapshot.docs.isNotEmpty) {
-      // Admin login successful
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => AdminPage()),
-      );
-      return;
+      if (adminSnapshot.docs.isNotEmpty) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => AdminPage()),
+        );
+        return;
+      }
+
+      print('Invalid admin credentials.');
+    } catch (e) {
+      print('Error during admin login: $e');
     }
-
-    // Admin login failed
-    print('Invalid admin credentials.');
-  } catch (e) {
-    print('Error during admin login: $e');
   }
-}
-
-
-
 
   void route() {
     User? user = FirebaseAuth.instance.currentUser;
     var kk = FirebaseFirestore.instance
-            .collection('users')
-            .doc(user!.uid)
-            .get()
-            .then((DocumentSnapshot documentSnapshot) {
+        .collection('users')
+        .doc(user!.uid)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
-        if (documentSnapshot.get('rool') == "agent") {
-           Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>  Agent(),
-          ),
-        );
-        }else{
-          Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>  Customer(),
-          ),
-        );
+        bool isBlocked = documentSnapshot.get('blocked') ?? false;
+        if (isBlocked) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Account Blocked"),
+                content: Text("Sorry, your account has been blocked."),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text("OK"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          String role = documentSnapshot.get('rool') ?? '';
+          if (role == 'agent') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Agent(),
+              ),
+            );
+          } else {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Customer(),
+              ),
+            );
+          }
         }
       } else {
-        print('Document does not exist on the database');
+        print('Document does not exist in the database');
       }
     });
   }
 
   void signIn(String email, String password) async {
-  if (_formkey.currentState!.validate()) {
-    // Check if the user is an admin
-    if (email == 'admin@gmail.com') {
-      adminLogin(email, password);
-      return;
-    }
+    if (_formkey.currentState!.validate()) {
+      if (email == 'admin@gmail.com') {
+        adminLogin(email, password);
+        return;
+      }
 
-    try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      route();
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
+      try {
+        UserCredential userCredential =
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+        route();
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'user-not-found') {
+          print('No user found for that email.');
+        } else if (e.code == 'wrong-password') {
+          print('Wrong password provided for that user.');
+        }
       }
     }
   }
-}
-
 }

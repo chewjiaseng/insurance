@@ -375,36 +375,43 @@ class _RegisterState extends State<Register> {
     );
   }
 
-  void signUp(String email, String password, String rool) async {
-  CircularProgressIndicator();
-  if (_formkey.currentState!.validate()) {
-    await _auth
-        .createUserWithEmailAndPassword(email: email, password: password)
-        .then((value) => {
-              postDetailsToFirestore(
-                email,
-                name.text,
-                mobile.text,
-                rool,
-              )
-            })
-        .catchError((e) {});
-  }
-}
+ void signUp(String email, String password, String role) async {
+    if (_formkey.currentState!.validate()) {
+      try {
+        UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
 
-postDetailsToFirestore(String email, String name, String mobile, String role) async {
-  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-  var user = _auth.currentUser;
-  CollectionReference ref = FirebaseFirestore.instance.collection('users');
-  ref.doc(user!.uid).set({
-    'email': emailController.text,
-    'name': name,
-    'mobile': mobile,
-    'rool': rool,
-  });
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(builder: (context) => LoginPage()),
-  );
- }
+        // Set the user role and blocked status in Firestore
+        postDetailsToFirestore(
+          email,
+          name.text,
+          mobile.text,
+          role,
+          false, // New users should not be blocked by default
+        );
+      } catch (e) {
+        // Handle registration errors
+        print('Error during registration: $e');
+      }
+    }
+  }
+
+  postDetailsToFirestore(String email, String name, String mobile, String role, bool blocked) async {
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    var user = _auth.currentUser;
+    CollectionReference ref = FirebaseFirestore.instance.collection('users');
+    ref.doc(user!.uid).set({
+      'email': emailController.text,
+      'name': name,
+      'mobile': mobile,
+      'rool': role, // Corrected the field name to 'rool'
+      'blocked': blocked, // Save blocked status in Firestore
+    });
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
+    );
+  }
 }

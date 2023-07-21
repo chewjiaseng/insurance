@@ -53,58 +53,57 @@ class UserManagementPage extends StatelessWidget {
     });
   }
 
-  void toggleBlockUser(bool blocked, BuildContext context) {
-    try {
-      // Get the current blocked status from the database, provide a default value of false if it's null
-      bool currentlyBlocked = user['blocked'] ?? false;
-
-      // Update the 'blocked' field in the database for the user
-      FirebaseDatabase.instance
-          .reference()
-          .child('users')
-          .child(user['userId'])
-          .update({'blocked': blocked}).then((_) {
-        // Show a success message to the admin
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Success'),
-            content: Text(
-              blocked ? 'User blocked successfully.' : 'User unblocked successfully.',
+void toggleBlockUser(bool blocked, BuildContext context) {
+  try {
+    // Update the 'blocked' field in the database for the user
+    FirebaseDatabase.instance
+        .reference()
+        .child('users')
+        .child(user['userId'])
+        .update({'blocked': blocked}).then((_) {
+      // Show a success message to the admin
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Success'),
+          content: Text(
+            blocked ? 'User blocked successfully.' : 'User unblocked successfully.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
             ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('OK'),
-              ),
-            ],
-          ),
-        );
-      }).catchError((error) {
-        // Show an error message to the admin
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Error'),
-            content: Text('Failed to update blocked status. Please try again.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('OK'),
-              ),
-            ],
-          ),
-        );
-      });
-    } catch (e) {
-      // Print or handle the error
-      print('Error updating blocked status: $e');
-    }
+          ],
+        ),
+      );
+    }).catchError((error) {
+      // Show an error message to the admin
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('Failed to update blocked status. Please try again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    });
+  } catch (e) {
+    // Print or handle the error
+    print('Error updating blocked status: $e');
   }
+}
+
+
 
   @override
   Widget build(BuildContext context) {
