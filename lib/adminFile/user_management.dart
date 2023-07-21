@@ -2,22 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class UserManagementPage extends StatelessWidget {
-  final Map<String, dynamic> user;
+  final Map<String, dynamic>? user;
 
   UserManagementPage({required this.user});
 
-  // Function to assign a role to the user
-  void assignRole(String role, BuildContext context) {
-    // Handle null 'rool' value
-    String updatedRole = role != null ? role : ''; // Provide a default empty string if 'role' is null
+  Future<void> assignRole(String role, BuildContext context) async {
+    String updatedRole = role ?? '';
 
-    // Update the 'rool' field in the database for the user
-    FirebaseDatabase.instance
-        .reference()
-        .child('users')
-        .child(user['userId'])
-        .update({'rool': updatedRole}).then((_) {
-      // Show a success message to the admin
+    try {
+      await FirebaseDatabase.instance
+          .reference()
+          .child('users')
+          .child(user?['userId'])
+          .update({'role': updatedRole});
+      
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -33,8 +31,7 @@ class UserManagementPage extends StatelessWidget {
           ],
         ),
       );
-    }).catchError((error) {
-      // Show an error message to the admin
+    } catch (error) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -50,18 +47,24 @@ class UserManagementPage extends StatelessWidget {
           ],
         ),
       );
-    });
+    }
   }
 
-void toggleBlockUser(bool blocked, BuildContext context) {
-  try {
-    // Update the 'blocked' field in the database for the user
-    FirebaseDatabase.instance
-        .reference()
-        .child('users')
-        .child(user['userId'])
-        .update({'blocked': blocked}).then((_) {
-      // Show a success message to the admin
+  Future<void> toggleBlockUser(bool blocked, BuildContext context) async {
+    String? userId = user?['userId'];
+
+    if (userId == null) {
+      print('User ID is null.');
+      return;
+    }
+
+    try {
+      await FirebaseDatabase.instance
+          .reference()
+          .child('users')
+          .child(userId)
+          .update({'blocked': blocked});
+
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -79,8 +82,7 @@ void toggleBlockUser(bool blocked, BuildContext context) {
           ],
         ),
       );
-    }).catchError((error) {
-      // Show an error message to the admin
+    } catch (error) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -96,18 +98,31 @@ void toggleBlockUser(bool blocked, BuildContext context) {
           ],
         ),
       );
-    });
-  } catch (e) {
-    // Print or handle the error
-    print('Error updating blocked status: $e');
+    }
   }
-}
-
 
 
   @override
   Widget build(BuildContext context) {
-    bool isCustomer = user['rool'] == 'customer'; // Use 'rool' instead of 'role' based on your database structure
+     print('User object in UserManagementPage: $user'); // Add this line to check the user object
+     
+    if (user == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Error'),
+        ),
+        body: Center(
+          child: Text('User data not available.'),
+        ),
+      );
+    }
+
+    String? userId = user?['userId'];
+    String? role = user?['rool'];
+    String? profileImageUrl = user?['profileImageUrl'];
+    String? name = user?['name'];
+
+    bool isCustomer = role == 'customer';
 
     return Scaffold(
       appBar: AppBar(
@@ -117,24 +132,22 @@ void toggleBlockUser(bool blocked, BuildContext context) {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // User's Profile with Placeholder (Using FadeInImage)
             CircleAvatar(
               radius: 50,
-              backgroundImage: user['profileImageUrl'] != null
-                  ? NetworkImage(user['profileImageUrl']!) as ImageProvider<Object>?
-                  : null, // Use null to show the system default icon
-              child: user['profileImageUrl'] == null
+              backgroundImage: profileImageUrl != null
+                  ? NetworkImage(profileImageUrl) as ImageProvider<Object>?
+                  : null,
+              child: profileImageUrl == null
                   ? Icon(
                       Icons.person,
                       size: 50,
                       color: Colors.white,
                     )
-                  : null, // Hide the child widget when the profileImageUrl is not null
+                  : null,
             ),
             SizedBox(height: 10),
-            // User's Name
             Text(
-              '${user['name'] ?? 'Unknown User'}',
+              '${name ?? 'Unknown User'}',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -144,13 +157,11 @@ void toggleBlockUser(bool blocked, BuildContext context) {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Assign Role Button
                 Container(
                   width: 160,
                   height: 160,
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      // Show a dialog to select the role to assign
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
@@ -161,21 +172,21 @@ void toggleBlockUser(bool blocked, BuildContext context) {
                               ElevatedButton(
                                 onPressed: () {
                                   assignRole('admin', context);
-                                  Navigator.pop(context); // Close the dialog after role assignment
+                                  Navigator.pop(context);
                                 },
                                 child: Text('Admin'),
                               ),
                               ElevatedButton(
                                 onPressed: () {
                                   assignRole('customer', context);
-                                  Navigator.pop(context); // Close the dialog after role assignment
+                                  Navigator.pop(context);
                                 },
                                 child: Text('Customer'),
                               ),
                               ElevatedButton(
                                 onPressed: () {
                                   assignRole('consultant', context);
-                                  Navigator.pop(context); // Close the dialog after role assignment
+                                  Navigator.pop(context);
                                 },
                                 child: Text('Consultant'),
                               ),
@@ -187,8 +198,8 @@ void toggleBlockUser(bool blocked, BuildContext context) {
                     icon: Icon(Icons.person_add, color: Colors.black),
                     label: Text('Assign Role', style: TextStyle(color: Colors.black)),
                     style: ElevatedButton.styleFrom(
-                      primary: Color(0xF5F6F0F0), // Set the button color to transparent
-                      elevation: 0, // Disable the button elevation/shadow
+                      primary: Color(0xF5F6F0F0),
+                      elevation: 0,
                       shape: RoundedRectangleBorder(
                         side: BorderSide(color: Colors.grey, width: 2),
                         borderRadius: BorderRadius.circular(10),
@@ -197,7 +208,6 @@ void toggleBlockUser(bool blocked, BuildContext context) {
                   ),
                 ),
                 SizedBox(width: 20),
-                // View Activity Logs Button
                 Container(
                   width: 160,
                   height: 160,
@@ -208,8 +218,8 @@ void toggleBlockUser(bool blocked, BuildContext context) {
                     icon: Icon(Icons.history, color: Colors.black),
                     label: Text('View Activity Logs', style: TextStyle(color: Colors.black)),
                     style: ElevatedButton.styleFrom(
-                      primary: Color(0xF5F6F0F0), // Set the button color to transparent
-                      elevation: 0, // Disable the button elevation/shadow
+                      primary: Color(0xF5F6F0F0),
+                      elevation: 0,
                       shape: RoundedRectangleBorder(
                         side: BorderSide(color: Colors.grey, width: 2),
                         borderRadius: BorderRadius.circular(10),
@@ -223,21 +233,19 @@ void toggleBlockUser(bool blocked, BuildContext context) {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Block User Button
                 Container(
                   width: 160,
                   height: 160,
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      // Perform the action for "Block User" here
-                      bool currentlyBlocked = user['blocked'] ?? false; // Get the current blocked status from the database
-                      toggleBlockUser(!currentlyBlocked, context); // Toggle the blocked status (block/unblock user)
+                      bool currentlyBlocked = user?['blocked'] ?? false;
+                      toggleBlockUser(!currentlyBlocked, context);
                     },
                     icon: Icon(Icons.block, color: Colors.black),
                     label: Text('Block User', style: TextStyle(color: Colors.black)),
                     style: ElevatedButton.styleFrom(
-                      primary: Color(0xF5F6F0F0), // Set the button color to transparent
-                      elevation: 0, // Disable the button elevation/shadow
+                      primary: Color(0xF5F6F0F0),
+                      elevation: 0,
                       shape: RoundedRectangleBorder(
                         side: BorderSide(color: Colors.grey, width: 2),
                         borderRadius: BorderRadius.circular(10),
@@ -246,13 +254,11 @@ void toggleBlockUser(bool blocked, BuildContext context) {
                   ),
                 ),
                 SizedBox(width: 20),
-                // Review Consultant Registration / Upload Banner Button
                 Container(
                   width: 160,
                   height: 160,
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      // Perform the action based on the user's role
                       if (isCustomer) {
                         // Perform the action for "Upload Banner" here
                       } else {
@@ -268,8 +274,8 @@ void toggleBlockUser(bool blocked, BuildContext context) {
                       style: TextStyle(color: Colors.black),
                     ),
                     style: ElevatedButton.styleFrom(
-                      primary: Color(0xF5F6F0F0), // Set the button color to transparent
-                      elevation: 0, // Disable the button elevation/shadow
+                      primary: Color(0xF5F6F0F0),
+                      elevation: 0,
                       shape: RoundedRectangleBorder(
                         side: BorderSide(color: Colors.grey, width: 2),
                         borderRadius: BorderRadius.circular(10),

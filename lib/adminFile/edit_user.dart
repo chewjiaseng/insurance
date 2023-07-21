@@ -35,6 +35,7 @@ class EditUserPage extends StatelessWidget {
                 subtitle: Text('Role: ${user['rool'] ?? 'N/A'}'),
                 trailing: ElevatedButton(
                   onPressed: () {
+                    print('User object: $user'); // Add this line to check the user object
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -52,8 +53,15 @@ class EditUserPage extends StatelessWidget {
     );
   }
 
-  Future<List<Map<String, dynamic>>> getUsers() async {
-    final snapshot = await FirebaseFirestore.instance.collection('users').get();
-    return snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
-  }
+Future<List<Map<String, dynamic>>> getUsers() async {
+  final snapshot = await FirebaseFirestore.instance.collection('users').get();
+  return snapshot.docs.map((doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    // Check if 'userId' key exists in the data, if not, set it to the document ID from Firebase
+    if (!data.containsKey('userId')) {
+      data['userId'] = doc.id;
+    }
+    return data;
+  }).toList();
+ }
 }
