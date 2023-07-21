@@ -50,56 +50,60 @@ class UserManagementPage extends StatelessWidget {
     }
   }
 
-  Future<void> toggleBlockUser(bool blocked, BuildContext context) async {
-    String? userId = user?['userId'];
+Future<void> toggleBlockUser(BuildContext context) async {
+  String? userId = user?['userId'];
 
-    if (userId == null) {
-      print('User ID is null.');
-      return;
-    }
-
-    try {
-      await FirebaseDatabase.instance
-          .reference()
-          .child('users')
-          .child(userId)
-          .update({'blocked': blocked});
-
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Success'),
-          content: Text(
-            blocked ? 'User blocked successfully.' : 'User unblocked successfully.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
-    } catch (error) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Error'),
-          content: Text('Failed to update blocked status. Please try again.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
-    }
+  if (userId == null) {
+    print('User ID is null.');
+    return;
   }
+
+  print('Toggling block status for user with ID: $userId');
+
+  try {
+    // Set the "blocked" field to true
+    await FirebaseDatabase.instance
+        .reference()
+        .child('users')
+        .child(userId)
+        .update({'blocked': true});
+
+    print('User blocked successfully: $userId');
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Success'),
+        content: Text('User blocked successfully.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  } catch (error) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text('Failed to update blocked status. Please try again.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+    print('Error updating blocked status: $error');
+  }
+}
 
 
   @override
@@ -238,8 +242,7 @@ class UserManagementPage extends StatelessWidget {
                   height: 160,
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      bool currentlyBlocked = user?['blocked'] ?? false;
-                      toggleBlockUser(!currentlyBlocked, context);
+                      toggleBlockUser(context); // Pass the context here
                     },
                     icon: Icon(Icons.block, color: Colors.black),
                     label: Text('Block User', style: TextStyle(color: Colors.black)),
