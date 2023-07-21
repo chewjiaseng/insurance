@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; 
 
 class UserManagementPage extends StatelessWidget {
   final Map<String, dynamic>? user;
 
   UserManagementPage({required this.user});
 
-  Future<void> assignRole(String role, BuildContext context) async {
+   Future<void> assignRole(String role, BuildContext context) async {
     String updatedRole = role ?? '';
 
     try {
-      await FirebaseDatabase.instance
-          .reference()
-          .child('users')
-          .child(user?['userId'])
-          .update({'role': updatedRole});
-      
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user?['userId'])
+          .update({'rool': updatedRole});
+
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -50,61 +49,59 @@ class UserManagementPage extends StatelessWidget {
     }
   }
 
-Future<void> toggleBlockUser(BuildContext context) async {
-  String? userId = user?['userId'];
+  Future<void> toggleBlockUser(BuildContext context) async {
+    String? userId = user?['userId'];
 
-  if (userId == null) {
-    print('User ID is null.');
-    return;
+    if (userId == null) {
+      print('User ID is null.');
+      return;
+    }
+
+    print('Toggling block status for user with ID: $userId');
+
+    try {
+      // Set the "blocked" field to true
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .update({'blocked': true});
+
+      print('User blocked successfully: $userId');
+
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Success'),
+          content: Text('User blocked successfully.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } catch (error) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('Failed to update blocked status. Please try again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+      print('Error updating blocked status: $error');
+    }
   }
-
-  print('Toggling block status for user with ID: $userId');
-
-  try {
-    // Set the "blocked" field to true
-    await FirebaseDatabase.instance
-        .reference()
-        .child('users')
-        .child(userId)
-        .update({'blocked': true});
-
-    print('User blocked successfully: $userId');
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Success'),
-        content: Text('User blocked successfully.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text('OK'),
-          ),
-        ],
-      ),
-    );
-  } catch (error) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Error'),
-        content: Text('Failed to update blocked status. Please try again.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text('OK'),
-          ),
-        ],
-      ),
-    );
-    print('Error updating blocked status: $error');
-  }
-}
-
 
   @override
   Widget build(BuildContext context) {

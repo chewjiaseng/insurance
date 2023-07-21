@@ -53,7 +53,7 @@ class _AdminPageState extends State<AdminPage> {
                   padding: wrapperPadding,
                   decoration: BoxDecoration(
                     color: Color.fromRGBO(122, 135, 177, 0.961),
-                    border: Border.all(color: Colors.brown, width: 2),
+                    border: Border.all(color: Color.fromRGBO(41, 45, 86, 1), width: 2),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Column(
