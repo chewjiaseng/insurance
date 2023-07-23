@@ -1,7 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../login.dart';
+import 'ShareAppsPage.dart'; // Import the ShareAppsPage class
+import 'ViewCustomersPage.dart'; //Import the ViewCustomersPage class
+import 'ViewPolicyAvailable.dart'; // Import the ViewPolicyPage class
 
 class Agent extends StatefulWidget {
   const Agent({Key? key});
@@ -92,10 +96,19 @@ class _AgentState extends State<Agent> {
                       children: [
                         ElevatedButton.icon(
                           onPressed: () {
-                            // TODO: Implement "View Customers" functionality
+                            // Navigate to the ViewCustomersPage with the role "customer"
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ViewCustomersPage(
+                                  roleToRetrieve: 'customer',
+                                ),
+                              ),
+                            );
                           },
                           icon: Icon(Icons.person, color: Colors.black),
-                          label: Text('View Customers', style: TextStyle(color: Colors.black)),
+                          label: Text('View Customers',
+                              style: TextStyle(color: Colors.black)),
                           style: ElevatedButton.styleFrom(
                             minimumSize: Size(160, 60),
                             primary: Color(0xF5F6F0F0),
@@ -108,10 +121,17 @@ class _AgentState extends State<Agent> {
                         ),
                         ElevatedButton.icon(
                           onPressed: () {
-                            // TODO: Implement "View Policies" functionality
+                            // Navigate to the ViewPolicyAvailable page
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ViewPolicyAvailable(),
+                              ),
+                            );
                           },
                           icon: Icon(Icons.policy, color: Colors.black),
-                          label: Text('View Policies', style: TextStyle(color: Colors.black)),
+                          label: Text('View Policies Company',
+                              style: TextStyle(color: Colors.black)),
                           style: ElevatedButton.styleFrom(
                             minimumSize: Size(160, 60),
                             primary: Color(0xF5F6F0F0),
@@ -127,7 +147,8 @@ class _AgentState extends State<Agent> {
                             // TODO: Implement "View Booster Packages" functionality
                           },
                           icon: Icon(Icons.shopping_bag, color: Colors.black),
-                          label: Text('View Booster Packages', style: TextStyle(color: Colors.black)),
+                          label: Text('View Reward Point',
+                              style: TextStyle(color: Colors.black)),
                           style: ElevatedButton.styleFrom(
                             minimumSize: Size(160, 60),
                             primary: Color(0xF5F6F0F0),
@@ -140,10 +161,17 @@ class _AgentState extends State<Agent> {
                         ),
                         ElevatedButton.icon(
                           onPressed: () {
-                            // TODO: Implement "Invite New Customers" functionality
+                            // Navigate to the ShareAppsPage
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ShareAppsPage(),
+                              ),
+                            );
                           },
                           icon: Icon(Icons.email, color: Colors.black),
-                          label: Text('Invite New Customers', style: TextStyle(color: Colors.black)),
+                          label: Text('Share Apps',
+                              style: TextStyle(color: Colors.black)),
                           style: ElevatedButton.styleFrom(
                             minimumSize: Size(160, 60),
                             primary: Color(0xF5F6F0F0),
