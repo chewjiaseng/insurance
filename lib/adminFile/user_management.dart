@@ -1,10 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; 
+import 'activity_logs_page.dart';
 
 class UserManagementPage extends StatelessWidget {
   final Map<String, dynamic>? user;
 
   UserManagementPage({required this.user});
+
+   // Add the addActivityLog method here
+  Future<void> addActivityLog(String userId, String activity) async {
+    try {
+      // Generate a random ID for the log document
+      String logId = FirebaseFirestore.instance.collection('logs').doc().id;
+
+      // Create a map with the log data
+      Map<String, dynamic> logData = {
+        'userId': userId,
+        'activity': activity,
+        'timestamp': Timestamp.now(), // Use Firestore's timestamp for the current time
+      };
+
+      // Add the log document to the "logs" collection with the generated logId
+      await FirebaseFirestore.instance.collection('logs').doc(logId).set(logData);
+    } catch (error) {
+      print('Error adding activity log: $error');
+    }
+  }
 
    Future<void> assignRole(String role, BuildContext context) async {
     String updatedRole = role ?? '';
@@ -14,6 +35,9 @@ class UserManagementPage extends StatelessWidget {
           .collection('users')
           .doc(user?['userId'])
           .update({'rool': updatedRole});
+
+      // Call the addActivityLog method when the role is assigned/updated
+      await addActivityLog(user?['userId'], 'Role Assigned: $updatedRole');
 
       showDialog(
         context: context,
@@ -66,6 +90,9 @@ class UserManagementPage extends StatelessWidget {
           .doc(userId)
           .update({'blocked': true});
 
+    // Call the addActivityLog method when the user is blocked
+    await addActivityLog(userId, 'User Blocked');
+
       print('User blocked successfully: $userId');
 
       showDialog(
@@ -100,6 +127,65 @@ class UserManagementPage extends StatelessWidget {
         ),
       );
       print('Error updating blocked status: $error');
+    }
+  }
+
+  Future<void> viewActivityLogs(BuildContext context) async {
+    String? userId = user?['userId'];
+
+    if (userId == null) {
+      print('User ID is null.');
+      return;
+    }
+
+    print('Fetching activity logs for user with ID: $userId');
+
+    try {
+      // Fetch activity logs for the specific user from Firestore
+      QuerySnapshot logsSnapshot = await FirebaseFirestore.instance
+          .collection('logs')
+          .where('userId', isEqualTo: userId)
+          .orderBy('timestamp', descending: true)
+          .get();
+
+      // Process the logs and navigate to the ActivityLogsPage passing the logs
+      List<String> activityLogs = [];
+      for (var doc in logsSnapshot.docs) {
+        String activity = doc['activity'];
+        Timestamp timestamp = doc['timestamp'];
+        DateTime dateTime = timestamp.toDate();
+        String logMessage = '$activity - ${dateTime.toString()}';
+        activityLogs.add(logMessage);
+      }
+
+      // Navigate to the ActivityLogsPage and pass the logs as arguments
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ActivityLogsPage(
+            userName: user?['name'] ?? 'Unknown User',
+            activityLogs: activityLogs,
+          ),
+        ),
+      );
+    } catch (error) {
+      print('Error fetching activity logs: $error');
+      // Display an error message to the user (you can customize this as needed)
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('Failed to fetch activity logs. Please try again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
   }
 
@@ -186,7 +272,7 @@ class UserManagementPage extends StatelessWidget {
                               ),
                               ElevatedButton(
                                 onPressed: () {
-                                  assignRole('consultant', context);
+                                  assignRole('agent', context);
                                   Navigator.pop(context);
                                 },
                                 child: Text('Consultant'),
@@ -214,7 +300,7 @@ class UserManagementPage extends StatelessWidget {
                   height: 160,
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      // Perform the action for "View Activity Logs" here
+                       viewActivityLogs(context); // Call the method to view activity logs
                     },
                     icon: Icon(Icons.history, color: Colors.black),
                     label: Text('View Activity Logs', style: TextStyle(color: Colors.black)),
