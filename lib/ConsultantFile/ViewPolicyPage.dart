@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'DisplayPolicyPage.dart'; // Import the DisplayImagePage class
-
+import 'DisplayOldPolicyPage.dart'; // Import the DisplayImagePage class
+import 'DisplayNewPolicyPage.dart'; // Import the DisplayImagePage class
+import 'DisplayPolicyStatusPage.dart';
 // ... Other code ...
 
 class ViewPolicyPage extends StatelessWidget {
@@ -26,8 +27,8 @@ class ViewPolicyPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => DisplayPolicyPage(
-                        imageAssetPath: 'assets/OldPolicy.jpg'),
+                    builder: (context) => DisplayOldPolicyPage(
+                        imageAssetPath: 'assets/images/OldPolicy.jpg'),
                   ),
                 );
               },
@@ -38,7 +39,17 @@ class ViewPolicyPage extends StatelessWidget {
             ),
             SizedBox(height: 16),
             ElevatedButton(
-              onPressed: null, // Implement other buttons as needed
+              onPressed: () {
+                // Navigate to the DisplayPolicyPage with the image asset path for the new policy
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DisplayNewPolicyPage(
+                      imageAssetPath: 'assets/images/NewPolicy.jpg',
+                    ),
+                  ),
+                );
+              },// Implement other buttons as needed
               child: Text('New Policy'),
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(240, 80),
@@ -46,7 +57,17 @@ class ViewPolicyPage extends StatelessWidget {
             ),
             SizedBox(height: 16),
             ElevatedButton(
-              onPressed: null, // Implement other buttons as needed
+              onPressed: () {
+                // Navigate to the DisplayPolicyStatusPage with the image asset path for policy status
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DisplayPolicyStatusPage(
+                      imageAssetPath: 'assets/images/PolicyStatus1.jpg',
+                    ),
+                  ),
+                );
+              }, // Implement other buttons as needed
               child: Text('Policy Status'),
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(240, 80),
