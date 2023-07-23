@@ -13,21 +13,61 @@ class ActivityLogsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Activity Logs for $userName'),
+        title: Text('Activity Logs: $userName'),
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 16),
+            Container(
+              color: const Color.fromARGB(255, 0, 42, 212), 
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'Activity Logs :',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white, // Set text color for visibility
+                ),
+              ),
+            ),
+            SizedBox(height: 8),
             if (activityLogs.isEmpty)
-              Text('No activity logs found.')
+              Expanded(
+                child: Center(
+                  child: Text('No activity logs found.'),
+                ),
+              )
             else
               Expanded(
                 child: ListView.builder(
                   itemCount: activityLogs.length,
                   itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(activityLogs[index]),
+                    // Check if the log is related to "Role Assigned" or "User Blocked"
+                    bool isRoleAssignedLog = activityLogs[index].contains('Role Assigned');
+                    bool isUserBlockedLog = activityLogs[index].contains('User Blocked');
+
+                    Color logColor = Colors.black; // Default black color for other logs
+                    if (isUserBlockedLog) {
+                      logColor = Color.fromRGBO(76, 78, 175, 1); // Default green for other "Role Assigned" logs
+                      
+                    } else if (isRoleAssignedLog) {
+                      logColor = Color(0xFF1E7CC4); // Orange for User Blocked logs
+                    }
+
+                    return Container(
+                      color: logColor,
+                      padding: EdgeInsets.all(8),
+                      child: ListTile(
+                        title: Text(
+                          activityLogs[index],
+                          style: TextStyle(
+                            color: Colors.white, // Set text color for visibility
+                            fontWeight: isRoleAssignedLog || isUserBlockedLog ? FontWeight.bold : FontWeight.normal,
+                          ),
+                        ),
+                      ),
                     );
                   },
                 ),

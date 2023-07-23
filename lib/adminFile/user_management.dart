@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'activity_logs_page.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
 
-class UserManagementPage extends StatelessWidget {
+class UserManagementPage extends StatefulWidget {
   final Map<String, dynamic>? user;
 
   UserManagementPage({required this.user});
 
-   // Add the addActivityLog method here
+  @override
+  _UserManagementPageState createState() => _UserManagementPageState();
+}
+
+class _UserManagementPageState extends State<UserManagementPage> {
+  // Add the addActivityLog method here
   Future<void> addActivityLog(String userId, String activity) async {
     try {
       // Generate a random ID for the log document
@@ -27,17 +35,24 @@ class UserManagementPage extends StatelessWidget {
     }
   }
 
-   Future<void> assignRole(String role, BuildContext context) async {
+  Future<void> assignRole(String role) async {
     String updatedRole = role ?? '';
+
+    print('Assigning role: $updatedRole');
 
     try {
       await FirebaseFirestore.instance
           .collection('users')
-          .doc(user?['userId'])
+          .doc(widget.user?['userId'])
           .update({'rool': updatedRole});
 
       // Call the addActivityLog method when the role is assigned/updated
-      await addActivityLog(user?['userId'], 'Role Assigned: $updatedRole');
+      await addActivityLog(widget.user?['userId'], 'Role Assigned: $updatedRole');
+
+      print('Role assigned successfully');
+
+      // Get the current context of the UserManagementPage
+      BuildContext context = this.context;
 
       showDialog(
         context: context,
@@ -47,7 +62,7 @@ class UserManagementPage extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(context); // Close the dialog using the correct context
               },
               child: Text('OK'),
             ),
@@ -55,6 +70,11 @@ class UserManagementPage extends StatelessWidget {
         ),
       );
     } catch (error) {
+      print('Error assigning role: $error');
+
+      // Get the current context of the UserManagementPage
+      BuildContext context = this.context;
+
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -63,7 +83,7 @@ class UserManagementPage extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(context); // Close the dialog using the correct context
               },
               child: Text('OK'),
             ),
@@ -74,7 +94,7 @@ class UserManagementPage extends StatelessWidget {
   }
 
   Future<void> toggleBlockUser(BuildContext context) async {
-    String? userId = user?['userId'];
+    String? userId = widget.user?['userId'];
 
     if (userId == null) {
       print('User ID is null.');
@@ -90,8 +110,8 @@ class UserManagementPage extends StatelessWidget {
           .doc(userId)
           .update({'blocked': true});
 
-    // Call the addActivityLog method when the user is blocked
-    await addActivityLog(userId, 'User Blocked');
+      // Call the addActivityLog method when the user is blocked
+      await addActivityLog(userId, 'User Blocked');
 
       print('User blocked successfully: $userId');
 
@@ -131,7 +151,7 @@ class UserManagementPage extends StatelessWidget {
   }
 
   Future<void> viewActivityLogs(BuildContext context) async {
-    String? userId = user?['userId'];
+    String? userId = widget.user?['userId'];
 
     if (userId == null) {
       print('User ID is null.');
@@ -163,7 +183,7 @@ class UserManagementPage extends StatelessWidget {
         context,
         MaterialPageRoute(
           builder: (context) => ActivityLogsPage(
-            userName: user?['name'] ?? 'Unknown User',
+            userName: widget.user?['name'] ?? 'Unknown User',
             activityLogs: activityLogs,
           ),
         ),
@@ -189,11 +209,80 @@ class UserManagementPage extends StatelessWidget {
     }
   }
 
+Future<void> uploadBanner(BuildContext context) async {
+  final picker = ImagePicker();
+  XFile? pickedFile;
+
+  // Allow the user to pick an image from their gallery
+  try {
+    pickedFile = await picker.pickImage(source: ImageSource.gallery);
+  } catch (e) {
+    print('Error picking image: $e');
+  }
+
+  // If an image is picked, upload it to Firebase Storage
+  if (pickedFile != null) {
+    File imageFile = File(pickedFile.path);
+    String userId = widget.user?['userId'];
+
+    try {
+      // Upload the image to Firebase Storage with a unique filename
+      String fileName = 'banner_$userId.png';
+      Reference storageRef = FirebaseStorage.instance.ref().child(fileName);
+      await storageRef.putFile(imageFile);
+
+      // Get the download URL of the uploaded image
+      String downloadURL = await storageRef.getDownloadURL();
+
+      // Update the user's profileImageUrl field in Firestore with the download URL
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .update({'profileImageUrl': downloadURL});
+
+      // Show a success dialog to the user
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Success'),
+          content: Text('Banner uploaded successfully.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } catch (error) {
+      // Show an error dialog if the upload fails
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('Failed to upload banner. Please try again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+      print('Error uploading banner: $error');
+    }
+  }
+}
+
   @override
   Widget build(BuildContext context) {
-     print('User object in UserManagementPage: $user'); // Add this line to check the user object
-     
-    if (user == null) {
+    print('User object in UserManagementPage: ${widget.user}'); // Add this line to check the user object
+
+    if (widget.user == null) {
       return Scaffold(
         appBar: AppBar(
           title: Text('Error'),
@@ -204,10 +293,10 @@ class UserManagementPage extends StatelessWidget {
       );
     }
 
-    String? userId = user?['userId'];
-    String? role = user?['rool'];
-    String? profileImageUrl = user?['profileImageUrl'];
-    String? name = user?['name'];
+    String? userId = widget.user?['userId'];
+    String? role = widget.user?['rool'];
+    String? profileImageUrl = widget.user?['profileImageUrl'];
+    String? name = widget.user?['name'];
 
     bool isCustomer = role == 'customer';
 
@@ -258,21 +347,21 @@ class UserManagementPage extends StatelessWidget {
                             children: [
                               ElevatedButton(
                                 onPressed: () {
-                                  assignRole('admin', context);
+                                  assignRole('admin');
                                   Navigator.pop(context);
                                 },
                                 child: Text('Admin'),
                               ),
                               ElevatedButton(
                                 onPressed: () {
-                                  assignRole('customer', context);
+                                  assignRole('customer');
                                   Navigator.pop(context);
                                 },
                                 child: Text('Customer'),
                               ),
                               ElevatedButton(
                                 onPressed: () {
-                                  assignRole('agent', context);
+                                  assignRole('agent');
                                   Navigator.pop(context);
                                 },
                                 child: Text('Consultant'),
@@ -300,7 +389,7 @@ class UserManagementPage extends StatelessWidget {
                   height: 160,
                   child: ElevatedButton.icon(
                     onPressed: () {
-                       viewActivityLogs(context); // Call the method to view activity logs
+                      viewActivityLogs(context); // Call the method to view activity logs
                     },
                     icon: Icon(Icons.history, color: Colors.black),
                     label: Text('View Activity Logs', style: TextStyle(color: Colors.black)),
@@ -346,7 +435,7 @@ class UserManagementPage extends StatelessWidget {
                   child: ElevatedButton.icon(
                     onPressed: () {
                       if (isCustomer) {
-                        // Perform the action for "Upload Banner" here
+                        uploadBanner(context); // Call the uploadBanner function
                       } else {
                         // Perform the action for "Review Consultant Registration" here
                       }
