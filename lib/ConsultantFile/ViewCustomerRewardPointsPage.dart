@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import 'ViewPolicyPage.dart';
 import 'ViewRewardPointsPage.dart'; // Import the ViewPolicyPage class
 
 class ViewCustomerRewardPointsPage extends StatelessWidget {
@@ -12,7 +11,7 @@ class ViewCustomerRewardPointsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('View Customers'),
+        title: const Text('View Reward Points'),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
