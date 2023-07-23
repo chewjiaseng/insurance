@@ -6,6 +6,7 @@ import '../login.dart';
 import 'ShareAppsPage.dart'; // Import the ShareAppsPage class
 import 'ViewCustomersPage.dart'; //Import the ViewCustomersPage class
 import 'ViewPolicyAvailable.dart'; // Import the ViewPolicyPage class
+import 'ViewCustomerRewardPointsPage.dart';
 
 class Agent extends StatefulWidget {
   const Agent({Key? key});
@@ -144,7 +145,15 @@ class _AgentState extends State<Agent> {
                         ),
                         ElevatedButton.icon(
                           onPressed: () {
-                            // TODO: Implement "View Booster Packages" functionality
+                            // Navigate to the ViewCustomersPage with the role "customer"
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ViewCustomerRewardPointsPage(
+                                  roleToRetrieve: 'customer',
+                                ),
+                              ),
+                            );
                           },
                           icon: Icon(Icons.shopping_bag, color: Colors.black),
                           label: Text('View Reward Point',
