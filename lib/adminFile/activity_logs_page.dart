@@ -50,7 +50,7 @@ class ActivityLogsPage extends StatelessWidget {
 
                     Color logColor = Colors.black; // Default black color for other logs
                     if (isUserBlockedLog) {
-                      logColor = Color.fromRGBO(76, 78, 175, 1); // Default green for other "Role Assigned" logs
+                      logColor = Color(0xFF62A7C5); // Default green for other "Role Assigned" logs
                       
                     } else if (isRoleAssignedLog) {
                       logColor = Color(0xFF1E7CC4); // Orange for User Blocked logs

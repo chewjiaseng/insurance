@@ -15,7 +15,7 @@ class UserManagementPage extends StatefulWidget {
 }
 
 class _UserManagementPageState extends State<UserManagementPage> {
-  // Add the addActivityLog method here
+  
   Future<void> addActivityLog(String userId, String activity) async {
     try {
       // Generate a random ID for the log document
