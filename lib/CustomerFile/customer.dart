@@ -11,7 +11,7 @@ class Customer extends StatefulWidget {
 }
 
 class _CustomerState extends State<Customer> {
-  late String _userName;
+  String? _userName;
   String? _profileImageUrl; // Nullable variable for profile image URL
 
   @override
@@ -20,32 +20,33 @@ class _CustomerState extends State<Customer> {
     _fetchUserData();
   }
 
-  Future<void> _fetchUserData() async {
-    try {
-      // Get the current user ID from FirebaseAuth
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        // Fetch the user document from Firestore using the user ID
-        final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-        if (userDoc.exists) {
-          // Get the user's real name and profile image URL from the document data
-          setState(() {
-            _userName = userDoc['name'];
+Future<void> _fetchUserData() async {
+  try {
+    // Get the current user ID from FirebaseAuth
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // Fetch the user document from Firestore using the user ID
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      if (userDoc.exists) {
+        // Get the user's real name from the document data
+        setState(() {
+          _userName = userDoc['name'];
 
-            // Check if the 'profileImageUrl' field exists in the document and has a valid value
-            if (userDoc['profileImageUrl'] != null && userDoc['profileImageUrl'].toString().isNotEmpty) {
-              _profileImageUrl = userDoc['profileImageUrl'];
-            } else {
-              // If the 'profileImageUrl' field is empty or doesn't exist, set the variable to null
-              _profileImageUrl = null;
-            }
-          });
-        }
+          // Check if the 'profileImageUrl' field exists in the document and has a valid value
+          if (userDoc['profileImageUrl'] != null && userDoc['profileImageUrl'].toString().isNotEmpty) {
+            _profileImageUrl = userDoc['profileImageUrl'];
+          } else {
+            // If the 'profileImageUrl' field is empty or doesn't exist, set the variable to null
+            _profileImageUrl = null;
+          }
+        });
       }
-    } catch (error) {
-      print('Error fetching user data: $error');
     }
+  } catch (error) {
+    print('Error fetching user data: $error');
   }
+}
+
 
   // Load profile image based on the URL's prefix
   Widget _loadProfileImage() {
