@@ -13,7 +13,7 @@ class ViewRewardPointsPage extends StatelessWidget {
     // Show the "Redeemed Successfully" SnackBar
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Redeemed Successfully! You earned 10 points. Just waiting admin to approve!'),
+        content: Text('Redeemed Successfully! You earned 10 points. Just waiting for admin to approve!'),
         duration: Duration(seconds: 2),
       ),
     );
@@ -27,7 +27,7 @@ class ViewRewardPointsPage extends StatelessWidget {
     // Show the "Points Deducted" SnackBar
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Points Deducted! You lost 10 points. Waiting admin to approve!'),
+        content: Text('Points Deducted! You lost 10 points. Waiting for admin to approve!'),
         duration: Duration(seconds: 2),
       ),
     );
