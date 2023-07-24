@@ -31,7 +31,8 @@ class _ShareAppsPageState extends State<ShareAppsPage> {
     Iterable<Contact> contacts = await ContactsService.getContacts();
     setState(() {
       _contacts = contacts.toList();
-      _contacts.sort((a, b) => a.displayName?.toLowerCase().compareTo(b.displayName?.toLowerCase() ?? '') ?? 0);
+      _contacts.sort((a, b) =>
+          a.displayName?.toLowerCase().compareTo(b.displayName?.toLowerCase() ?? '') ?? 0);
     });
   }
 
@@ -48,34 +49,50 @@ class _ShareAppsPageState extends State<ShareAppsPage> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text('Share App with ${contact.displayName ?? 'Contact'}'),
-          content: SingleChildScrollView(
-            child: ListBody(
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
+                Text(
+                  'Share App with ${contact.displayName ?? 'Contact'}',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 16),
                 ListTile(
                   leading: _buildContactAvatar(contact),
                   title: Text(contact.displayName ?? 'N/A'),
                   subtitle: Text(contact.phones?.first.value ?? 'N/A'),
                 ),
+                SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('Cancel'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        _shareAppWithContact(contact);
+                        Navigator.pop(context); // Close the dialog after sharing
+                      },
+                      child: Text('Share'),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                _shareAppWithContact(contact);
-                Navigator.pop(context); // Close the dialog after sharing
-              },
-              child: Text('Share'),
-            ),
-          ],
         );
       },
     );
@@ -140,4 +157,10 @@ class _ShareAppsPageState extends State<ShareAppsPage> {
       ),
     );
   }
+}
+
+void main() {
+  runApp(MaterialApp(
+    home: ShareAppsPage(),
+  ));
 }
