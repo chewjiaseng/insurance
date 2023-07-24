@@ -1,6 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../login.dart'; // Replace this with the path to your login page if necessary
 
 class Customer extends StatefulWidget {
   const Customer({Key? key});
@@ -10,6 +11,57 @@ class Customer extends StatefulWidget {
 }
 
 class _CustomerState extends State<Customer> {
+  late String _userName;
+  String? _profileImageUrl; // Nullable variable for profile image URL
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
+    try {
+      // Get the current user ID from FirebaseAuth
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        // Fetch the user document from Firestore using the user ID
+        final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        if (userDoc.exists) {
+          // Get the user's real name and profile image URL from the document data
+          setState(() {
+            _userName = userDoc['name'];
+
+            // Check if the 'profileImageUrl' field exists in the document and has a valid value
+            if (userDoc['profileImageUrl'] != null && userDoc['profileImageUrl'].toString().isNotEmpty) {
+              _profileImageUrl = userDoc['profileImageUrl'];
+            } else {
+              // If the 'profileImageUrl' field is empty or doesn't exist, set the variable to null
+              _profileImageUrl = null;
+            }
+          });
+        }
+      }
+    } catch (error) {
+      print('Error fetching user data: $error');
+    }
+  }
+
+  // Load profile image based on the URL's prefix
+  Widget _loadProfileImage() {
+    if (_profileImageUrl != null && _profileImageUrl!.startsWith('http')) {
+      return Image.network(
+        _profileImageUrl!,
+        width: 500,
+        height: 200,
+        fit: BoxFit.cover,
+      );
+    } else {
+      // If _profileImageUrl is null or the URL is not valid, return an empty container
+      return Container();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,24 +90,40 @@ class _CustomerState extends State<Customer> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircleAvatar(
-                  // Display profile picture here if available
-                  // Replace this with the actual profile picture
-                  radius: 50,
-                  backgroundColor: Colors.grey,
-                  child: Icon(
-                    Icons.person,
-                    size: 60,
-                    color: Colors.white,
-                  ),
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    if (_profileImageUrl != null) // Only show the banner if _profileImageUrl is not null
+                      Container(
+                        width: 500,
+                        height: 200,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.transparent,
+                          // Add a transparent color when no profile image is available
+                        ),
+                        child: _loadProfileImage(),
+                      ),
+                    CircleAvatar(
+                      // Display profile picture here if available
+                      // Replace this with the actual profile picture
+                      radius: 50,
+                      backgroundColor: Colors.grey,
+                      child: Icon(
+                        Icons.person,
+                        size: 60,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 10),
                 Text(
-                  'Customer Name', // Display the customer's name here
+                  _userName ?? 'Unknown User',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                 ),
                 SizedBox(height: 20),
