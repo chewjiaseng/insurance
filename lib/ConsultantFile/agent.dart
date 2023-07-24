@@ -131,7 +131,7 @@ class _AgentState extends State<Agent> {
                             );
                           },
                           icon: Icon(Icons.policy, color: Colors.black),
-                          label: Text('View Policies Company',
+                          label: Text('View Avaiable Booster Package',
                               style: TextStyle(color: Colors.black)),
                           style: ElevatedButton.styleFrom(
                             minimumSize: Size(160, 60),

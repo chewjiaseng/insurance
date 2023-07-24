@@ -15,7 +15,7 @@ class ViewPolicyAvailable extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Available Insurance Policies Company'),
+        title: Text('Booster Package'),
       ),
       body: ListView.builder(
         itemCount: availablePolicies.length,
