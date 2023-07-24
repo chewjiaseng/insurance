@@ -16,7 +16,10 @@ class _TermsAndConditionsPageState extends State<TermsAndConditionsPage> {
   bool _isUploading = false;
 
   Future<void> _selectFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
 
     if (result != null && result.files.isNotEmpty) {
       setState(() {
@@ -86,27 +89,40 @@ class _TermsAndConditionsPageState extends State<TermsAndConditionsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Upload Term & Condition'),
+        title: Text('Upload Terms & Conditions'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: _selectFile,
-              child: Text('Select File'),
-            ),
-            SizedBox(height: 16),
-            if (_selectedFile != null)
-              Text('Selected File: ${_selectedFile!.path}'),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _isUploading ? null : _uploadFile,
-              child: _isUploading ? CircularProgressIndicator() : Text('Upload File'),
-            ),
-          ],
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: _selectFile,
+                child: Text('Select PDF File'),
+              ),
+              SizedBox(height: 16),
+              if (_selectedFile != null)
+                Text('Selected File: ${_selectedFile!.path}', style: TextStyle(fontWeight: FontWeight.bold)),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _isUploading ? null : _uploadFile,
+                child: _isUploading
+                    ? Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CircularProgressIndicator(),
+                          SizedBox(width: 8),
+                          Text('Uploading...'),
+                        ],
+                      )
+                    : Text('Upload File'),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
+
