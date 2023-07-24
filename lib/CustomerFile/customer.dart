@@ -11,7 +11,7 @@ class Customer extends StatefulWidget {
 }
 
 class _CustomerState extends State<Customer> {
-  late String _userName;
+  String? _userName;
   String? _profileImageUrl; // Nullable variable for profile image URL
 
   @override
