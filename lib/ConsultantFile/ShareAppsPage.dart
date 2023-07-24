@@ -3,8 +3,37 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share/share.dart';
 
-class ShareAppsPage extends StatelessWidget {
+class ShareAppsPage extends StatefulWidget {
   const ShareAppsPage({Key? key}) : super(key: key);
+
+  @override
+  _ShareAppsPageState createState() => _ShareAppsPageState();
+}
+
+class _ShareAppsPageState extends State<ShareAppsPage> {
+  List<Contact> _contacts = [];
+  Contact? _selectedContact;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchContacts();
+  }
+
+  Future<void> _fetchContacts() async {
+    // Check and request the READ_CONTACTS permission
+    var status = await Permission.contacts.request();
+    if (!status.isGranted) {
+      // Handle the case when the permission is not granted
+      return;
+    }
+
+    Iterable<Contact> contacts = await ContactsService.getContacts();
+    setState(() {
+      _contacts = contacts.toList();
+      _contacts.sort((a, b) => a.displayName?.toLowerCase().compareTo(b.displayName?.toLowerCase() ?? '') ?? 0);
+    });
+  }
 
   Future<void> _shareAppWithContact(Contact contact) async {
     final String message = 'Check out this awesome app!\n\n'
@@ -15,43 +44,53 @@ class ShareAppsPage extends StatelessWidget {
     );
   }
 
-  Future<void> _selectContactAndShare(BuildContext context) async {
-    Iterable<Contact> contacts = await ContactsService.getContacts();
-    if (contacts.isEmpty) {
-      // Handle the case when no contacts are available
-      return;
-    }
-
-    // Check and request the READ_CONTACTS permission
-    var status = await Permission.contacts.request();
-    if (!status.isGranted) {
-      // Handle the case when the permission is not granted
-      return;
-    }
-
-    await showDialog(
+  void _showContactDialog(BuildContext context, Contact contact) {
+    showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Select a contact to share the app with:'),
+          title: Text('Share App with ${contact.displayName ?? 'Contact'}'),
           content: SingleChildScrollView(
             child: ListBody(
-              children: contacts
-                  .map(
-                    (contact) => ListTile(
-                      title: Text(contact.displayName ?? ''),
-                      onTap: () {
-                        Navigator.pop(context);
-                        _shareAppWithContact(contact);
-                      },
-                    ),
-                  )
-                  .toList(),
+              children: [
+                ListTile(
+                  leading: _buildContactAvatar(contact),
+                  title: Text(contact.displayName ?? 'N/A'),
+                  subtitle: Text(contact.phones?.first.value ?? 'N/A'),
+                ),
+              ],
             ),
           ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _shareAppWithContact(contact);
+                Navigator.pop(context); // Close the dialog after sharing
+              },
+              child: Text('Share'),
+            ),
+          ],
         );
       },
     );
+  }
+
+  Widget _buildContactAvatar(Contact contact) {
+    if (contact.avatar != null && contact.avatar!.isNotEmpty) {
+      return CircleAvatar(
+        backgroundImage: MemoryImage(contact.avatar!),
+      );
+    } else {
+      return CircleAvatar(
+        child: Text(contact.displayName?[0] ?? ''),
+      );
+    }
   }
 
   @override
@@ -60,12 +99,27 @@ class ShareAppsPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Share Apps'),
       ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () => _selectContactAndShare(context),
-          child: Text('Share App'),
-        ),
-      ),
+      body: _contacts.isEmpty
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : ListView.builder(
+              itemCount: _contacts.length,
+              itemBuilder: (context, index) {
+                final contact = _contacts[index];
+                return ListTile(
+                  leading: _buildContactAvatar(contact),
+                  title: Text(contact.displayName ?? 'N/A'),
+                  subtitle: Text(contact.phones?.first.value ?? 'N/A'),
+                  onTap: () {
+                    setState(() {
+                      _selectedContact = contact;
+                    });
+                    _showContactDialog(context, contact);
+                  },
+                );
+              },
+            ),
     );
   }
 }

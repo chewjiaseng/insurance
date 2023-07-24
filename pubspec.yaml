@@ -46,7 +46,8 @@ dependencies:
   permission_handler: ^10.0.0  # Add this line
   contacts_service: ^0.6.3
   share: ^2.0.4
-
+  flutter_sms: ^2.0.0
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
