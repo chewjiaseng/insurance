@@ -12,7 +12,7 @@ class Customer extends StatefulWidget {
 
 class _CustomerState extends State<Customer> {
   late String _userName;
-  late String _profileImageUrl = 'assets/images/default_profile_image.png'; // Default image
+  String? _profileImageUrl; // Nullable variable for profile image URL
 
   @override
   void initState() {
@@ -26,13 +26,19 @@ class _CustomerState extends State<Customer> {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         // Fetch the user document from Firestore using the user ID
-        final userDoc =
-            await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
         if (userDoc.exists) {
           // Get the user's real name and profile image URL from the document data
           setState(() {
             _userName = userDoc['name'];
-            _profileImageUrl = userDoc['profileImageUrl'] ?? 'assets/images/default_profile_image.png';
+
+            // Check if the 'profileImageUrl' field exists in the document and has a valid value
+            if (userDoc['profileImageUrl'] != null && userDoc['profileImageUrl'].toString().isNotEmpty) {
+              _profileImageUrl = userDoc['profileImageUrl'];
+            } else {
+              // If the 'profileImageUrl' field is empty or doesn't exist, set the variable to null
+              _profileImageUrl = null;
+            }
           });
         }
       }
@@ -43,20 +49,16 @@ class _CustomerState extends State<Customer> {
 
   // Load profile image based on the URL's prefix
   Widget _loadProfileImage() {
-    if (_profileImageUrl.startsWith('http')) {
+    if (_profileImageUrl != null && _profileImageUrl!.startsWith('http')) {
       return Image.network(
-        _profileImageUrl,
+        _profileImageUrl!,
         width: 500,
         height: 200,
         fit: BoxFit.cover,
       );
     } else {
-      return Image.asset(
-        _profileImageUrl,
-        width: 150,
-        height: 100,
-        fit: BoxFit.cover,
-      );
+      // If _profileImageUrl is null or the URL is not valid, return an empty container
+      return Container();
     }
   }
 
@@ -91,16 +93,17 @@ class _CustomerState extends State<Customer> {
                 Stack(
                   alignment: Alignment.center,
                   children: [
-                    Container(
-                      width: 500,
-                      height: 200,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.transparent,
-                        // Add a transparent color when no profile image is available
+                    if (_profileImageUrl != null) // Only show the banner if _profileImageUrl is not null
+                      Container(
+                        width: 500,
+                        height: 200,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.transparent,
+                          // Add a transparent color when no profile image is available
+                        ),
+                        child: _loadProfileImage(),
                       ),
-                      child: _loadProfileImage(),
-                    ),
                     CircleAvatar(
                       // Display profile picture here if available
                       // Replace this with the actual profile picture
