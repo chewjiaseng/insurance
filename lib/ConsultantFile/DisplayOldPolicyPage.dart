@@ -10,10 +10,23 @@ class DisplayOldPolicyPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Old Policy'),
+        backgroundColor: Colors.teal, // Set app bar color
       ),
-      body: Center(
-        child: Image.asset(
-            'assets/images/OldPolicy.jpg'), // Display the image using the asset path
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.teal,
+              Colors.teal.shade200,
+              Colors.white,
+            ],
+          ),
+        ),
+        child: Center(
+          child: Image.asset(imageAssetPath), // Display the image using the asset path
+        ),
       ),
     );
   }

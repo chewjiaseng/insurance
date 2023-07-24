@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:insuranceapp/ConsultantFile/ViewAvailableBoosterPackage.dart';
+import 'package:insuranceapp/ConsultantFile/ViewPolicyPage.dart';
 
 import '../login.dart';
 import 'ShareAppsPage.dart'; // Import the ShareAppsPage class
-import 'ViewCustomersPage.dart'; //Import the ViewCustomersPage class
-import 'ViewPolicyAvailable.dart'; // Import the ViewPolicyPage class
+import 'ViewCustomersPage.dart'; //Import the ViewCustomersPage class // Import the ViewPolicyPage class
 import 'ViewCustomerRewardPointsPage.dart';
 
 class Agent extends StatefulWidget {
@@ -126,7 +127,7 @@ class _AgentState extends State<Agent> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ViewPolicyAvailable(),
+                                builder: (context) => ViewAvailableBoosterPackage(),
                               ),
                             );
                           },

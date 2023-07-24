@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-
-import 'DisplayOldPolicyPage.dart'; // Import the DisplayImagePage class
-import 'DisplayNewPolicyPage.dart'; // Import the DisplayImagePage class
+import 'DisplayOldPolicyPage.dart';
+import 'DisplayNewPolicyPage.dart';
 import 'DisplayPolicyStatusPage.dart';
-// ... Other code ...
 
 class ViewPolicyPage extends StatelessWidget {
-  final Map<String, dynamic> customerData; // Define the customer data parameter
+  final Map<String, dynamic> customerData;
 
-  // Add the named parameter 'customerData' to the constructor
   ViewPolicyPage({required this.customerData});
 
   @override
@@ -16,65 +13,83 @@ class ViewPolicyPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Booster Package'),
+        backgroundColor: Colors.teal, // Set app bar color
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                // Navigate to the DisplayImagePage with the image asset path
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DisplayOldPolicyPage(
-                        imageAssetPath: 'assets/images/OldPolicy.jpg'),
-                  ),
-                );
-              },
-              child: Text('Old Policy'),
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(240, 80),
-              ),
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                // Navigate to the DisplayPolicyPage with the image asset path for the new policy
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DisplayNewPolicyPage(
-                      imageAssetPath: 'assets/images/NewPolicy.jpg',
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.teal,
+              Colors.teal.shade200,
+              Colors.white,
+            ],
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DisplayOldPolicyPage(
+                        imageAssetPath: 'assets/images/OldPolicy.jpg',
+                      ),
                     ),
-                  ),
-                );
-              },// Implement other buttons as needed
-              child: Text('New Policy'),
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(240, 80),
+                  );
+                },
+                child: Text('Old Policy'),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(240, 80),
+                  primary: Colors.teal,
+                  textStyle: TextStyle(fontSize: 18),
+                ),
               ),
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                // Navigate to the DisplayPolicyStatusPage with the image asset path for policy status
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DisplayPolicyStatusPage(
-                      imageAssetPath: 'assets/images/PolicyStatus1.jpg',
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DisplayNewPolicyPage(
+                        imageAssetPath: 'assets/images/NewPolicy.jpg',
+                      ),
                     ),
-                  ),
-                );
-              }, // Implement other buttons as needed
-              child: Text('Policy Status'),
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(240, 80),
+                  );
+                },
+                child: Text('New Policy'),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(240, 80),
+                  primary: Colors.teal,
+                  textStyle: TextStyle(fontSize: 18),
+                ),
               ),
-            ),
-            SizedBox(height: 16),
-          ],
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DisplayPolicyStatusPage(
+                        imageAssetPath: 'assets/images/PolicyStatus1.jpg',
+                      ),
+                    ),
+                  );
+                },
+                child: Text('Policy Status'),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(240, 80),
+                  primary: Colors.teal,
+                  textStyle: TextStyle(fontSize: 18),
+                ),
+              ),
+              SizedBox(height: 16),
+            ],
+          ),
         ),
       ),
     );

@@ -98,28 +98,46 @@ class _ShareAppsPageState extends State<ShareAppsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Share Apps'),
+        backgroundColor: Colors.teal, // Set app bar color
       ),
-      body: _contacts.isEmpty
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : ListView.builder(
-              itemCount: _contacts.length,
-              itemBuilder: (context, index) {
-                final contact = _contacts[index];
-                return ListTile(
-                  leading: _buildContactAvatar(contact),
-                  title: Text(contact.displayName ?? 'N/A'),
-                  subtitle: Text(contact.phones?.first.value ?? 'N/A'),
-                  onTap: () {
-                    setState(() {
-                      _selectedContact = contact;
-                    });
-                    _showContactDialog(context, contact);
-                  },
-                );
-              },
-            ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.teal,
+              Colors.teal.shade200,
+              Colors.white,
+            ],
+          ),
+        ),
+        child: _contacts.isEmpty
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : ListView.builder(
+                itemCount: _contacts.length,
+                itemBuilder: (context, index) {
+                  final contact = _contacts[index];
+                  return Card(
+                    elevation: 2,
+                    margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    child: ListTile(
+                      leading: _buildContactAvatar(contact),
+                      title: Text(contact.displayName ?? 'N/A'),
+                      subtitle: Text(contact.phones?.first.value ?? 'N/A'),
+                      onTap: () {
+                        setState(() {
+                          _selectedContact = contact;
+                        });
+                        _showContactDialog(context, contact);
+                      },
+                    ),
+                  );
+                },
+              ),
+      ),
     );
   }
 }

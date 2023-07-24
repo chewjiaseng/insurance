@@ -9,11 +9,22 @@ class DisplayPolicyStatusPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Policy Status'),
+        title: Text(
+          'Policy Status',
+          style: TextStyle(
+            // Customize the app bar text style
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
+        ),
+        backgroundColor: Colors.teal, // Customize the app bar color
       ),
+      backgroundColor: Colors.white, // Customize the page background color
       body: Center(
         child: Image.asset(
-            'assets/images/PolicyStatus1.png'), // Display the image using the asset path
+          'assets/images/PolicyStatus1.png', // Display the image using the asset path
+          fit: BoxFit.cover, // Adjust the image to cover the entire container
+        ),
       ),
     );
   }
