@@ -93,36 +93,69 @@ class _TermsAndConditionsPageState extends State<TermsAndConditionsPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: _selectFile,
-                child: Text('Select PDF File'),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(height: 20),
+            Text(
+              'Please Upload Terms & Conditions',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color.fromRGBO(46, 15, 147, 1)),
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              'for Customers and Consultants',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF5969D3)),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 40),
+            Container(
+              decoration: BoxDecoration(
+                color: Color.fromRGBO(223, 240, 255, 1), // Light blue color for the container
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(8),
               ),
-              SizedBox(height: 16),
-              if (_selectedFile != null)
-                Text('Selected File: ${_selectedFile!.path}', style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _isUploading ? null : _uploadFile,
-                child: _isUploading
-                    ? Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          CircularProgressIndicator(),
-                          SizedBox(width: 8),
-                          Text('Uploading...'),
-                        ],
-                      )
-                    : Text('Upload File'),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    ElevatedButton(
+                      onPressed: _selectFile,
+                      child: Text('Select PDF File'),
+                    ),
+                    SizedBox(height: 16),
+                    if (_selectedFile != null)
+                      Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Color(0xFFBDD4FA), // White color for the selected file path text
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          'Selected File: ${_selectedFile!.path}',
+                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black), // Black color for text
+                        ),
+                      ),
+                    SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: _isUploading ? null : _uploadFile,
+                      child: _isUploading
+                          ? Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                CircularProgressIndicator(),
+                                SizedBox(width: 8),
+                                Text('Uploading...'),
+                              ],
+                            )
+                          : Text('Upload File'),
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
-

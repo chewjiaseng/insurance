@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../login.dart'; // Replace this with the path to your login page if necessary
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'dart:io';
 
 class Customer extends StatefulWidget {
   const Customer({Key? key});
@@ -18,6 +22,75 @@ class _CustomerState extends State<Customer> {
   void initState() {
     super.initState();
     _fetchUserData();
+    _showTermsAndConditionsDialog();
+  }
+
+void _showTermsAndConditionsDialog() async {
+  print("Entering _showTermsAndConditionsDialog()");
+
+  String role = 'customer';
+  final snapshot = await FirebaseFirestore.instance.collection('termsAndConditions').doc(role).get();
+  String downloadURL = snapshot['url'];
+
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text('Hello, Please Read'),
+      content: FutureBuilder<String>(
+        future: _downloadAndSavePDF(downloadURL),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError || snapshot.data == null) {
+            return Text('Error downloading PDF');
+          } else {
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.8, // Set the height as per your requirement
+              width: MediaQuery.of(context).size.width * 0.8,   // Set the width as per your requirement
+              child: PDFView(
+                filePath: snapshot.data!,
+              ),
+            );
+          }
+        },
+      ),
+      actions: [
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text('Agree and do not show again'),
+        ),
+      ],
+    ),
+  );
+}
+  
+ Future<String> _downloadAndSavePDF(String downloadURL) async {
+    try {
+      Directory appDocDir = await getApplicationDocumentsDirectory();
+      String appDocPath = appDocDir.path;
+      String fileName = 'Customer_Term_Condition.pdf'; // Adjust filename here
+      File pdfFile = File('$appDocPath/$fileName');
+
+      bool fileExists = await pdfFile.exists();
+      if (!fileExists) {
+        // Download the PDF if it doesn't exist in the app directory
+        final pdfData =
+            await firebase_storage.FirebaseStorage.instance.refFromURL(downloadURL).getData();
+        if (pdfData != null) {
+          await pdfFile.writeAsBytes(pdfData.buffer.asUint8List());
+        } else {
+          print('Failed to download PDF data');
+          return '';
+        }
+      }
+
+      return pdfFile.path;
+    } catch (error) {
+      print('Error downloading PDF: $error');
+      return '';
+    }
   }
 
 Future<void> _fetchUserData() async {
@@ -33,7 +106,9 @@ Future<void> _fetchUserData() async {
           _userName = userDoc['name'];
 
           // Check if the 'profileImageUrl' field exists in the document and has a valid value
-          if (userDoc['profileImageUrl'] != null && userDoc['profileImageUrl'].toString().isNotEmpty) {
+          if (userDoc.data()!.containsKey('profileImageUrl') &&
+              userDoc['profileImageUrl'] != null &&
+              userDoc['profileImageUrl'].toString().isNotEmpty) {
             _profileImageUrl = userDoc['profileImageUrl'];
           } else {
             // If the 'profileImageUrl' field is empty or doesn't exist, set the variable to null

@@ -8,6 +8,10 @@ import '../login.dart';
 import 'ShareAppsPage.dart'; // Import the ShareAppsPage class
 import 'ViewCustomersPage.dart'; //Import the ViewCustomersPage class // Import the ViewPolicyPage class
 import 'ViewCustomerRewardPointsPage.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'dart:io';
 
 class Agent extends StatefulWidget {
   const Agent({Key? key});
@@ -23,6 +27,7 @@ class _AgentState extends State<Agent> {
   void initState() {
     super.initState();
     _getConsultantName(); // Get the consultant's name when the widget initializes
+    _showTermsAndConditionsDialog(); // Show the Consultant Terms & Conditions immediately
   }
 
   Future<void> _getConsultantName() async {
@@ -39,6 +44,73 @@ class _AgentState extends State<Agent> {
     }
   }
 
+void _showTermsAndConditionsDialog() async {
+  print("Entering _showTermsAndConditionsDialog()");
+
+  String role = 'agent';
+  final snapshot = await FirebaseFirestore.instance.collection('termsAndConditions').doc(role).get();
+  String downloadURL = snapshot['url'];
+
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text('Hello, Please Read'),
+      content: FutureBuilder<String>(
+        future: _downloadAndSavePDF(downloadURL),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError || snapshot.data == null) {
+            return Text('Error downloading PDF');
+          } else {
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.8, // Set the height as per your requirement
+              width: MediaQuery.of(context).size.width * 0.8,   // Set the width as per your requirement
+              child: PDFView(
+                filePath: snapshot.data!,
+              ),
+            );
+          }
+        },
+      ),
+      actions: [
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text('Agree and do not show again'),
+        ),
+      ],
+    ),
+  );
+}
+  
+ Future<String> _downloadAndSavePDF(String downloadURL) async {
+    try {
+      Directory appDocDir = await getApplicationDocumentsDirectory();
+      String appDocPath = appDocDir.path;
+      String fileName = 'Consultant_Term_Condition.pdf'; // Adjust filename here
+      File pdfFile = File('$appDocPath/$fileName');
+
+      bool fileExists = await pdfFile.exists();
+      if (!fileExists) {
+        // Download the PDF if it doesn't exist in the app directory
+        final pdfData =
+            await firebase_storage.FirebaseStorage.instance.refFromURL(downloadURL).getData();
+        if (pdfData != null) {
+          await pdfFile.writeAsBytes(pdfData.buffer.asUint8List());
+        } else {
+          print('Failed to download PDF data');
+          return '';
+        }
+      }
+
+      return pdfFile.path;
+    } catch (error) {
+      print('Error downloading PDF: $error');
+      return '';
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
