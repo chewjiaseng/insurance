@@ -1,11 +1,11 @@
-import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'ConsultantFile/RegisterAgentPage.dart';
 import 'CustomerFile/customer.dart';
-import 'ConsultantFile/agent.dart';
-import 'register.dart';
 import 'adminFile/adminUI.dart';
+import 'register.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -281,7 +281,15 @@ class _LoginPageState extends State<LoginPage> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => Agent(),
+                builder: (context) => RegisterAgentPage(),
+              ),
+            );
+          } else if (role == 'consultant') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    RegisterAgentPage(), // Replace with your Register Agent page class
               ),
             );
           } else {
