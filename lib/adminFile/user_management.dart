@@ -278,7 +278,7 @@ Future<void> uploadBanner(BuildContext context) async {
   }
 }
 
-  @override
+ @override
   Widget build(BuildContext context) {
     print('User object in UserManagementPage: ${widget.user}'); // Add this line to check the user object
 
@@ -304,164 +304,173 @@ Future<void> uploadBanner(BuildContext context) async {
       appBar: AppBar(
         title: Text('User Management'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: profileImageUrl != null
-                  ? NetworkImage(profileImageUrl) as ImageProvider<Object>?
-                  : null,
-              child: profileImageUrl == null
-                  ? Icon(
-                      Icons.person,
-                      size: 50,
-                      color: Colors.white,
-                    )
-                  : null,
-            ),
-            SizedBox(height: 10),
-            Text(
-              '${name ?? 'Unknown User'}',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+      body: Stack(
+        // Use Stack to place the background image behind the content
+        children: [
+          Image.asset(
+            'assets/images/User Management.png', // Background image path
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            fit: BoxFit.cover,
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                radius: 50,
+                backgroundImage: profileImageUrl != null
+                    ? NetworkImage(profileImageUrl) as ImageProvider<Object>?
+                    : null,
+                child: profileImageUrl == null
+                    ? Icon(
+                        Icons.person,
+                        size: 50,
+                        color: Colors.white,
+                      )
+                    : null,
               ),
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 160,
-                  height: 160,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text('Assign Role'),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  assignRole('admin');
-                                  Navigator.pop(context);
-                                },
-                                child: Text('Admin'),
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  assignRole('customer');
-                                  Navigator.pop(context);
-                                },
-                                child: Text('Customer'),
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  assignRole('agent');
-                                  Navigator.pop(context);
-                                },
-                                child: Text('Consultant'),
-                              ),
-                            ],
+              SizedBox(height: 10),
+              Text(
+                '${name ?? 'Unknown User'}',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 160,
+                    height: 160,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text('Assign Role'),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    assignRole('admin');
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('Admin'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    assignRole('customer');
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('Customer'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    assignRole('agent');
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('Consultant'),
+                                ),
+                              ],
+                            ),
                           ),
+                        );
+                      },
+                      icon: Icon(Icons.person_add, color: Colors.black),
+                      label: Text('Assign Role', style: TextStyle(color: Colors.black)),
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xF5F6F0F0),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Colors.grey, width: 2),
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                      );
-                    },
-                    icon: Icon(Icons.person_add, color: Colors.black),
-                    label: Text('Assign Role', style: TextStyle(color: Colors.black)),
-                    style: ElevatedButton.styleFrom(
-                      primary: Color(0xF5F6F0F0),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.grey, width: 2),
-                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(width: 20),
-                Container(
-                  width: 160,
-                  height: 160,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      viewActivityLogs(context); // Call the method to view activity logs
-                    },
-                    icon: Icon(Icons.history, color: Colors.black),
-                    label: Text('View Activity Logs', style: TextStyle(color: Colors.black)),
-                    style: ElevatedButton.styleFrom(
-                      primary: Color(0xF5F6F0F0),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.grey, width: 2),
-                        borderRadius: BorderRadius.circular(10),
+                  SizedBox(width: 20),
+                  Container(
+                    width: 160,
+                    height: 160,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        viewActivityLogs(context); // Call the method to view activity logs
+                      },
+                      icon: Icon(Icons.history, color: Colors.black),
+                      label: Text('View Activity Logs', style: TextStyle(color: Colors.black)),
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xF5F6F0F0),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Colors.grey, width: 2),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 160,
-                  height: 160,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      toggleBlockUser(context); // Pass the context here
-                    },
-                    icon: Icon(Icons.block, color: Colors.black),
-                    label: Text('Block User', style: TextStyle(color: Colors.black)),
-                    style: ElevatedButton.styleFrom(
-                      primary: Color(0xF5F6F0F0),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.grey, width: 2),
-                        borderRadius: BorderRadius.circular(10),
+                ],
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 160,
+                    height: 160,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        toggleBlockUser(context); // Pass the context here
+                      },
+                      icon: Icon(Icons.block, color: Colors.black),
+                      label: Text('Block User', style: TextStyle(color: Colors.black)),
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xF5F6F0F0),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Colors.grey, width: 2),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(width: 20),
-                Container(
-                  width: 160,
-                  height: 160,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      if (isCustomer) {
-                        uploadBanner(context); // Call the uploadBanner function
-                      } else {
-                        // Perform the action for "Review Consultant Registration" here
-                      }
-                    },
-                    icon: Icon(
-                      isCustomer ? Icons.file_upload : Icons.rate_review,
-                      color: Colors.black,
-                    ),
-                    label: Text(
-                      isCustomer ? 'Upload Banner' : 'Review Consultant Registration',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      primary: Color(0xF5F6F0F0),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.grey, width: 2),
-                        borderRadius: BorderRadius.circular(10),
+                  SizedBox(width: 20),
+                  Container(
+                    width: 160,
+                    height: 160,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        if (isCustomer) {
+                          uploadBanner(context); // Call the uploadBanner function
+                        } else {
+                          // Perform the action for "Review Consultant Registration" here
+                        }
+                      },
+                      icon: Icon(
+                        isCustomer ? Icons.file_upload : Icons.rate_review,
+                        color: Colors.black,
+                      ),
+                      label: Text(
+                        isCustomer ? 'Upload Banner' : 'Review Consultant Registration',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xF5F6F0F0),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Colors.grey, width: 2),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
-        ),
+                ],
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
