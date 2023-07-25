@@ -1,5 +1,47 @@
 import 'package:flutter/material.dart';
 
+class Transaction {
+  final String id;
+  final String type;
+  final int points;
+  final String status;
+  final String date;
+
+  Transaction({
+    required this.id,
+    required this.type,
+    required this.points,
+    required this.status,
+    required this.date,
+  });
+}
+
+class ViewTransactionPage extends StatelessWidget {
+  final List<Transaction> transactions; // List of transactions to display
+
+  ViewTransactionPage({required this.transactions});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Transaction History'),
+        backgroundColor: Colors.teal,
+      ),
+      body: ListView.builder(
+        itemCount: transactions.length,
+        itemBuilder: (context, index) {
+          final transaction = transactions[index];
+          return ListTile(
+            title: Text('${transaction.type} - ${transaction.points} Points'),
+            subtitle: Text('Status: ${transaction.status}, Date: ${transaction.date}'),
+          );
+        },
+      ),
+    );
+  }
+}
+
 class ViewRewardPointsPage extends StatelessWidget {
   final Map<String, dynamic> customerData;
 
@@ -109,37 +151,46 @@ class ViewRewardPointsPage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        _redeemPoints(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.teal,
-                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                      ),
-                      child: Text(
-                        'Redeem Points',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ),
-                    SizedBox(width: 20),
-                    ElevatedButton(
-                      onPressed: () {
-                        _deductPoints(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.red,
-                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                      ),
-                      child: Text(
-                        'Deduct Points',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ),
-                  ],
+                ElevatedButton(
+                  onPressed: () {
+                    _redeemPoints(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.teal,
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  ),
+                  child: Text(
+                    'Redeem Points',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+                SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    _deductPoints(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.red,
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  ),
+                  child: Text(
+                    'Deduct Points',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+                SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    _viewTransactions(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.blue,
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  ),
+                  child: Text(
+                    'View Redemption Transactions',
+                    style: TextStyle(fontSize: 18),
+                  ),
                 ),
               ],
             ),
@@ -148,4 +199,47 @@ class ViewRewardPointsPage extends StatelessWidget {
       ),
     );
   }
+
+  void _viewTransactions(BuildContext context) {
+    // Replace the following sample list of transactions with data retrieved from Firebase
+    List<Transaction> transactions = [
+      Transaction(
+        id: '1',
+        type: 'Redeem',
+        points: 10,
+        status: 'Pending',
+        date: '2023-07-24',
+      ),
+      Transaction(
+        id: '2',
+        type: 'Deduct',
+        points: 5,
+        status: 'Approved',
+        date: '2023-07-23',
+      ),
+      // Add more transactions as needed
+    ];
+
+    // Navigate to the ViewTransactionPage with the list of transactions
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ViewTransactionPage(transactions: transactions),
+      ),
+    );
+  }
+}
+
+void main() {
+  runApp(MaterialApp(
+    home: ViewRewardPointsPage(
+      customerData: {
+        'name': 'John Doe',
+        'point': 50,
+        'email': 'john.doe@example.com',
+        'mobile': '1234567890',
+        'rool': 'Customer',
+      },
+    ),
+  ));
 }
