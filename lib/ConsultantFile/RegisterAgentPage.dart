@@ -75,7 +75,7 @@ class _RegisterAgentPageState extends State<RegisterAgentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Register Agent'),
+        title: Text('Registration'),
         backgroundColor: Colors.teal,
         actions: [
           IconButton(
@@ -106,7 +106,7 @@ class _RegisterAgentPageState extends State<RegisterAgentPage> {
                 controller: idController,
                 style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  labelText: 'ID',
+                  labelText: 'National ID',
                   labelStyle: TextStyle(color: Colors.white),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
@@ -123,7 +123,7 @@ class _RegisterAgentPageState extends State<RegisterAgentPage> {
                 controller: codeController,
                 style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  labelText: 'Code',
+                  labelText: 'Agent Code',
                   labelStyle: TextStyle(color: Colors.white),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
