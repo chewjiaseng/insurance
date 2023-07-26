@@ -278,6 +278,114 @@ Future<void> uploadBanner(BuildContext context) async {
   }
 }
 
+Future<Map<String, dynamic>> fetchConsultantRegistration(String userId) async {
+  try {
+    DocumentSnapshot snapshot = await FirebaseFirestore.instance
+        .collection('agents') 
+        .doc(userId)
+        .get();
+
+    if (snapshot.exists) {
+      return snapshot.data() as Map<String, dynamic>;
+    } else {
+      return {};
+    }
+  } catch (error) {
+    print('Error fetching consultant registration: $error');
+    return {};
+  }
+}
+
+void _reviewConsultantRegistration() async {
+  try {
+    // Fetch the first document in the "agents" collection
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('agents')
+        .limit(1)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      // Get the first document from the query snapshot
+      DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
+
+      // Show a dialog with the consultant registration details
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(
+            'Consultant Registration Details',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('National ID:', style: TextStyle(fontWeight: FontWeight.bold, color:Color.fromRGBO(24, 113, 36, 1))),
+              Text(documentSnapshot['id'], style: TextStyle(color: Colors.teal)),
+              SizedBox(height: 10),
+              Text('Agent Code:', style: TextStyle(fontWeight: FontWeight.bold, color:Color.fromRGBO(24, 113, 36, 1))),
+              Text(documentSnapshot['code'], style: TextStyle(color: Colors.teal)),
+              SizedBox(height: 10),
+              Text('Agency:', style: TextStyle(fontWeight: FontWeight.bold, color:Color.fromRGBO(24, 113, 36, 1))),
+              Text(documentSnapshot['agency'], style: TextStyle(color: Colors.teal)),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(primary: Colors.red),
+              child: Text('Disagree'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(primary: Colors.green),
+              child: Text('Approve'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('Consultant registration data not found.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  } catch (error) {
+    print('Error fetching consultant registration: $error');
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text('Failed to fetch consultant registration data. Please try again.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
  @override
   Widget build(BuildContext context) {
     print('User object in UserManagementPage: ${widget.user}'); // Add this line to check the user object
@@ -445,7 +553,7 @@ Future<void> uploadBanner(BuildContext context) async {
                         if (isCustomer) {
                           uploadBanner(context); // Call the uploadBanner function
                         } else {
-                          // Perform the action for "Review Consultant Registration" here
+                           _reviewConsultantRegistration(); // Call the _reviewConsultantRegistration method
                         }
                       },
                       icon: Icon(
