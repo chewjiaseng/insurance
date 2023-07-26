@@ -69,14 +69,34 @@ class ViewCustomersPage extends StatelessWidget {
                       customer['name'],
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
+                        fontSize: 20, // Set the font size
+                        color: Colors.teal, // Set the font color
                       ),
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Email: ${customer['email']}'),
-                        Text('Phone: ${customer['mobile']}'),
-                        Text('Role: ${customer['rool']}'),
+                        Text(
+                          'Email: ${customer['email']}',
+                          style: TextStyle(
+                            fontSize: 16, // Set the font size
+                            color: Colors.black, // Set the font color
+                          ),
+                        ),
+                        Text(
+                          'Phone: ${customer['mobile']}',
+                          style: TextStyle(
+                            fontSize: 16, // Set the font size
+                            color: Colors.black, // Set the font color
+                          ),
+                        ),
+                        Text(
+                          'Role: ${customer['rool']}',
+                          style: TextStyle(
+                            fontSize: 16, // Set the font size
+                            color: Color(0xFF30851A), // Set the font color
+                          ),
+                        ),
                         // Add more details you want to display here.
                       ],
                     ),

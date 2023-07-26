@@ -93,7 +93,7 @@ class _RegisterAgentPageState extends State<RegisterAgentPage> {
             children: [
               SizedBox(height: 20),
               Text(
-                'Agent Registration',
+                'Consultant Registration',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 30,
@@ -123,7 +123,7 @@ class _RegisterAgentPageState extends State<RegisterAgentPage> {
                 controller: codeController,
                 style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  labelText: 'Agent Code',
+                  labelText: 'Consultant Code',
                   labelStyle: TextStyle(color: Colors.white),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),

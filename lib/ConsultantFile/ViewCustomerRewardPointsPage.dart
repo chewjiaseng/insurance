@@ -55,7 +55,8 @@ class ViewCustomerRewardPointsPage extends StatelessWidget {
             return ListView.builder(
               itemCount: customers.length,
               itemBuilder: (context, index) {
-                final customer = customers[index].data() as Map<String, dynamic>;
+                final customer =
+                    customers[index].data() as Map<String, dynamic>;
                 return Card(
                   color: Colors.white.withOpacity(0.9),
                   elevation: 4,
@@ -68,15 +69,41 @@ class ViewCustomerRewardPointsPage extends StatelessWidget {
                       customer['name'],
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
+                        fontSize: 20, // Set the font size
+                        color: Colors.teal, // Set the font color
                       ),
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Email: ${customer['email']}'),
-                        Text('Phone: ${customer['mobile']}'),
-                        Text('Role: ${customer['rool']}'),
-                        Text('Reward Points: ${customer['point']}'),
+                        Text(
+                          'Email: ${customer['email']}',
+                          style: TextStyle(
+                            fontSize: 16, // Set the font size
+                            color: Colors.black, // Set the font color
+                          ),
+                        ),
+                        Text(
+                          'Phone: ${customer['mobile']}',
+                          style: TextStyle(
+                            fontSize: 16, // Set the font size
+                            color: Colors.black, // Set the font color
+                          ),
+                        ),
+                        Text(
+                          'Role: ${customer['rool']}',
+                          style: TextStyle(
+                            fontSize: 16, // Set the font size
+                            color: Colors.black, // Set the font color
+                          ),
+                        ),
+                        Text(
+                          'Reward Points: ${customer['point']}',
+                          style: TextStyle(
+                            fontSize: 16, // Set the font size
+                            color: Color.fromRGBO(247, 19, 19, 1), // Set the font color
+                          ),
+                        ),
                         // Add more details you want to display here.
                       ],
                     ),

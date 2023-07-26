@@ -29,12 +29,12 @@ class _AgentState extends State<Agent> {
     _showTermsAndConditionsDialog();
   }
 
-  Future<void> _getConsultantName() async {
+   Future<void> _getConsultantName() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       var snapshot = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
       setState(() {
-        _consultantName = snapshot.get('consultantName');
+        _consultantName = snapshot.get('name');
       });
     }
   }
@@ -103,40 +103,38 @@ class _AgentState extends State<Agent> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Consultant"),
-        actions: [
-          IconButton(
-            onPressed: () {
-              logout(context);
-            },
-            icon: Icon(Icons.logout),
-          )
-        ],
-      ),
-      body: Stack(
-        children: [
-          Image.asset(
-            'assets/images/consultantbg.png',
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            fit: BoxFit.cover,
-          ),
-          Center(
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text("Consultant"),
+      actions: [
+        IconButton(
+          onPressed: () {
+            logout(context);
+          },
+          icon: Icon(Icons.logout),
+        )
+      ],
+    ),
+    body: Stack(
+      children: [
+        Image.asset(
+          'assets/images/consultantbg.png',
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          fit: BoxFit.cover,
+        ),
+        Align(
+          alignment: Alignment.center, // Center the content vertically
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
                   radius: 50,
-                  backgroundColor: Colors.grey,
-                  child: Icon(
-                    Icons.person,
-                    size: 60,
-                    color: Colors.white,
-                  ),
+                  backgroundImage: AssetImage('assets/images/consultant.jpg'),
                 ),
                 SizedBox(height: 10),
                 Text(
@@ -147,31 +145,30 @@ class _AgentState extends State<Agent> {
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 20), // Adjust spacing between avatar and buttons
                 Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: GridView.count(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 20,
-                      crossAxisSpacing: 20,
-                      children: [
-                        _buildGridItem(Icons.person, 'View Customers', ViewCustomersPage(roleToRetrieve: 'customer')),
-                        _buildGridItem(Icons.policy, 'View Available Booster Package', ViewAvailableBoosterPackage()),
-                        _buildGridItem(Icons.shopping_bag, 'View Reward Point', ViewCustomerRewardPointsPage(roleToRetrieve: 'customer')),
-                        _buildGridItem(Icons.email, 'Share Apps', ShareAppsPage()),
-                      ],
-                    ),
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 20,
+                    crossAxisSpacing: 20,
+                    children: [
+                      _buildGridItem(Icons.person, 'View Customers', ViewCustomersPage(roleToRetrieve: 'customer')),
+                      _buildGridItem(Icons.policy, 'View Available Booster Package', ViewAvailableBoosterPackage()),
+                      _buildGridItem(Icons.shopping_bag, 'View Reward Point', ViewCustomerRewardPointsPage(roleToRetrieve: 'customer')),
+                      _buildGridItem(Icons.email, 'Share Apps', ShareAppsPage()),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 
+  
   Widget _buildGridItem(IconData iconData, String title, Widget destination) {
     return ElevatedButton.icon(
       onPressed: () {
