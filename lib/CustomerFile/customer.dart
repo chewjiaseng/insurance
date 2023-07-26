@@ -250,7 +250,7 @@ class _CustomerState extends State<Customer> {
                         ),
                         ElevatedButton.icon(
                           onPressed: () {
-                            // Navigate to the ShareAppsPage
+                            // Navigate to the upload policy page
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -273,7 +273,7 @@ class _CustomerState extends State<Customer> {
                         ),
                         ElevatedButton.icon(
                           onPressed: () {
-                            // Navigate to the ShareAppsPage
+                            // Navigate to the booster package page
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -296,7 +296,7 @@ class _CustomerState extends State<Customer> {
                         ),
                         ElevatedButton.icon(
                           onPressed: () {
-                            // Navigate to the ShareAppsPage
+                            // Navigate to the Point and reward page
                             Navigator.push(
                               context,
                               MaterialPageRoute(

@@ -10,9 +10,9 @@ class _PointAndRewardPageState extends State<PointAndRewardPage> {
   int _pendingPoints = 1000; // Sample pending points for the customer
 
   List<RedeemableItem> _redeemableItems = [
-    RedeemableItem('RM10 Cash', 2000),
-    RedeemableItem('RM20 Cash', 3800),
-    RedeemableItem('RM50 Cash', 8000),
+    RedeemableItem('RM10 Cash', 500),
+    RedeemableItem('RM20 Cash', 900),
+    RedeemableItem('RM50 Cash', 2000),
   ];
 
   void _deductPoints(int pointsToDeduct) {
