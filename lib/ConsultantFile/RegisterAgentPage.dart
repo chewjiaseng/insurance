@@ -93,7 +93,7 @@ class _RegisterAgentPageState extends State<RegisterAgentPage> {
             children: [
               SizedBox(height: 20),
               Text(
-                'Register Agent',
+                'Agent Registration',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 30,
