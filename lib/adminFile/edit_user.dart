@@ -26,42 +26,59 @@ class EditUserPage extends StatelessWidget {
             return Center(child: Text('No users found'));
           }
 
-          return ListView.builder(
-            itemCount: users.length,
-            itemBuilder: (context, index) {
-              final user = users[index];
-              return ListTile(
-                title: Text('Name: ${user['name'] ?? 'N/A'}'),
-                subtitle: Text('Role: ${user['rool'] ?? 'N/A'}'),
-                trailing: ElevatedButton(
-                  onPressed: () {
-                    print('User object: $user'); // Add this line to check the user object
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => UserManagementPage(user: user),
+          return Container(
+            // Set the background image using DecorationImage
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/edituser.png'), // Replace with the path to your edituser.png image
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: ListView.builder(
+              itemCount: users.length,
+              itemBuilder: (context, index) {
+                final user = users[index];
+                return Card(
+                  color: Color.fromRGBO(81, 128, 198, 1),
+                  elevation: 4,
+                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: ListTile(
+                    title: Text('Name: ${user['name'] ?? 'N/A'}', style: TextStyle(color: Color.fromRGBO(245, 244, 244, 1))),
+                    subtitle: Text('Role: ${user['rool'] ?? 'N/A'}', style: TextStyle(color: Color.fromRGBO(198, 222, 241, 1))),
+                    trailing: ElevatedButton(
+                      onPressed: () {
+                        print('User object: $user');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UserManagementPage(user: user),
+                          ),
+                        );
+                      },
+                      child: Text('Manage'),
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xFF0F1465),
+                        onPrimary: Color(0xDBF0F6F7),
                       ),
-                    );
-                  },
-                  child: Text('Manage'),
-                ),
-              );
-            },
+                    ),
+                  ),
+                );
+              },
+            ),
           );
         },
       ),
     );
   }
 
-Future<List<Map<String, dynamic>>> getUsers() async {
-  final snapshot = await FirebaseFirestore.instance.collection('users').get();
-  return snapshot.docs.map((doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    // Check if 'userId' key exists in the data, if not, set it to the document ID from Firebase
-    if (!data.containsKey('userId')) {
-      data['userId'] = doc.id;
-    }
-    return data;
-  }).toList();
+  Future<List<Map<String, dynamic>>> getUsers() async {
+    final snapshot = await FirebaseFirestore.instance.collection('users').get();
+    return snapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      if (!data.containsKey('userId')) {
+        data['userId'] = doc.id;
+      }
+      return data;
+    }).toList();
  }
 }
