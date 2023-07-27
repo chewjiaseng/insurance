@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:insuranceapp/adminFile/edit_user.dart';
 import 'package:insuranceapp/adminFile/terms_and_conditions.dart';
+import 'package:insuranceapp/adminFile/reward_request.dart';
 // Import other files for additional functionalities here
 
 import '../login.dart';
@@ -139,12 +140,18 @@ class _AdminPageState extends State<AdminPage> {
                 ),
                 SizedBox(height: 20),
                 Container(
-                  width: buttonSize.width,
-                  height: buttonSize.height,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      // Perform the action for "Reward Redemption Requests" here
-                    },
+                width: buttonSize.width,
+                height: buttonSize.height,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    // Navigate to the RewardRequestPage when "Reward Requests" button is clicked
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RewardRequestPage(),
+                      ),
+                    );
+                  },
                     icon: Icon(Icons.star_rate, color: Colors.black),
                     label: Text('Reward Requests', style: TextStyle(color: Colors.black)),
                     style: ElevatedButton.styleFrom(

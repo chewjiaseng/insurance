@@ -63,23 +63,54 @@ class _UploadPolicyState extends State<UploadPolicy> {
       SnackBar(content: Text('Document uploaded successfully!')),
     );
   }
-
-  @override
+  
+ @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Upload Policy'),
       ),
-      body: Center(
-        child: Column(
-          children: <Widget>[
-            // Button to upload the document.
-            ElevatedButton(
-              onPressed: _uploadDocument,
-              child: Text('Upload Document'),
+      body: Stack(
+        children: [
+          // Background image
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/customerbg.png'),
+                fit: BoxFit.cover,
+              ),
             ),
-          ],
-        ),
+          ),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                // Title
+                Text(
+                  'Please upload your policy document',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromRGBO(13, 93, 32, 1),
+                  ),
+                ),
+                SizedBox(height: 20),
+                // Button to upload the document.
+                ElevatedButton(
+                  onPressed: _uploadDocument,
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.green, // Set the button color to green.
+                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 16),
+                  ),
+                  child: Text(
+                    'Upload Policy',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

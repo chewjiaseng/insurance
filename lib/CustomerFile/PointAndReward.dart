@@ -90,18 +90,38 @@ class _PointAndRewardPageState extends State<PointAndRewardPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Available Points: $_availablePoints',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Available Points:',
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Color.fromRGBO(4, 53, 6, 0.702)),
+                  ),
+                  Text(
+                    '$_availablePoints',
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Color.fromRGBO(4, 53, 6, 0.702)),
+                  ),
+                ],
               ),
-              Text(
-                'Pending Points: $_pendingPoints',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Pending Points:',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF18723B)),
+                  ),
+                  Text(
+                    '$_pendingPoints',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF18723B)),
+                  ),
+                ],
               ),
               SizedBox(height: 16),
               Text(
                 'Redeemable Items:',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Color.fromRGBO(4, 53, 6, 0.702)),
               ),
               Expanded(
                 child: ListView.builder(
@@ -150,12 +170,23 @@ class RedeemableItemCard extends StatelessWidget {
       margin: EdgeInsets.symmetric(vertical: 8.0),
       child: ListTile(
         title: Text(itemName),
-        subtitle: Text('Points required: $pointsRequired'),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Required Points:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+            Text('$pointsRequired', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+          ],
+        ),
         trailing: ElevatedButton(
           onPressed: onRedeemPressed,
-          child: Text('Redeem'),
+          child: Text('Redeem', style: TextStyle(color: Colors.white)),
+          style: ElevatedButton.styleFrom(
+            primary: Colors.green,
+            onPrimary: Colors.black,
+          ),
         ),
       ),
     );
   }
 }
+
